@@ -54,7 +54,7 @@
     $admin_url = SITEADMINADRESS;
 	$admin_root = SITEADMINADRESS; 
 	$_root = WEBROOT;
-	define("ROOT",$admin_root); 
+	//define("ROOT",$admin_root); 
     
     bindtextdomain('messages', './locale'); 
     textdomain('messages'); 
