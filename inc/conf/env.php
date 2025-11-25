@@ -3,14 +3,15 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL & ~E_DEPRECATED);
     
-	define("LOCAL",  false); // PARAMETERS FOR LOCAL AND REMOTE
+	define("LOCAL",  true); // PARAMETERS FOR LOCAL AND REMOTE
 	if(LOCAL===true){ // local
-		define("WEBROOT",  'C:/wamp/www');
-		define("BASEPATH",'/');
-		define('DB_HOST', "localhost");
-	    define('DB_USER', "root");
-	    define('DB_PASS', "");
-	    define('DB_NAME', "new");
+        define("ROOT",  'D:\consulting\\');
+        define("WEBROOT",  'D:\\consulting');
+        define("BASEPATH",'/');
+        define('DB_HOST', "localhost");
+        define('DB_USER', "root");
+        define('DB_PASS', "");
+        define('DB_NAME', "coach");
 	}
 	
 	else{  // remote
@@ -24,7 +25,7 @@
     
     
     define('PASSWORD_SALT', 'OvoJeSo');
-	define("WEBSITE",'https://consultation.profesionalnaastrologija.com');
+	define("WEBSITE",'http://consulting.local');
     define("SITEADMINADRESS",WEBROOT.BASEPATH.'@CMS/');
     define("UPLOAD",WEBROOT.BASEPATH.'upload/');
     
@@ -53,7 +54,7 @@
     $admin_url = SITEADMINADRESS;
 	$admin_root = SITEADMINADRESS; 
 	$_root = WEBROOT;
-	define("ROOT",$admin_root); 
+	//define("ROOT",$admin_root); 
     
     bindtextdomain('messages', './locale'); 
     textdomain('messages'); 

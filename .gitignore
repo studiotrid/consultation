@@ -1,0 +1,4 @@
+*.log
+.htaccess
+templates_c/*
+include/conf/env.php
