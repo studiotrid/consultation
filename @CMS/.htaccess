@@ -1,0 +1,50 @@
+AddDefaultCharset UTF-8
+RewriteEngine on
+
+<RequireAny>
+    Require ip 192.168
+    Require ip 95.180.73.118
+    Require ip 95.180.73.2
+    Require ip 95.180
+    Require ip 109.245
+</RequireAny>
+
+#RewriteCond %{HTTP_HOST} ^webshop.sava.co.me$
+#RewriteRule ^/@CMS/index.php$  /index.php [L]
+
+#RewriteCond %{HTTP_HOST} ^webshop\.(.*) [NC]
+#RewriteRule /@CMS(.*) https://webshop.sava.co.me/ [R,L]
+
+RewriteRule ^profile profile.php [QSA,L]
+RewriteRule ^pages pages.php [QSA,L]
+RewriteRule ^posts posts.php [QSA,L]
+RewriteRule ^autori autori.php [QSA,L]
+RewriteRule ^artikli artikli.php [QSA,L]
+RewriteRule ^conferences konf.php [QSA,L]
+RewriteRule ^biografije bio.php [QSA,L]
+RewriteRule ^predavanja predavanja.php [QSA,L]
+RewriteRule ^seminari seminari.php [QSA,L]
+RewriteRule ^plan plan.php [QSA,L]
+RewriteRule ^knjige-najava najave.php?tip=knjiga [QSA,L]
+RewriteRule ^dvd-najava najave.php?tip=dvd [QSA,L]
+RewriteRule ^clanak-najava najave.php?tip=clanak [QSA,L]
+RewriteRule ^sliders sliders.php [QSA,L]
+RewriteRule ^galleries gallery.php [QSA,L]
+RewriteRule ^gallery_items gallery_items.php [QSA,L]
+RewriteRule ^portfolioCategories portfolioCategory.php [QSA,L]
+RewriteRule ^portfolioItems portfolioItems.php [QSA,L]
+RewriteRule ^portfolios portfolios.php [QSA,L]
+RewriteRule ^mediaLibrary mediaLibrary.php [QSA,L]
+RewriteRule ^slider_items slider_items.php [QSA,L]
+RewriteRule ^menus menus.php [QSA,L]
+RewriteRule ^oblasti oblasti.php [QSA,L]
+RewriteRule ^translation translation.php [QSA,L]
+RewriteRule ^menu_items menu_items.php [QSA,L]
+RewriteRule ^categories categories.php [QSA,L]
+RewriteRule ^administrators administrators.php [QSA,L]
+
+RewriteRule ^image/([0-9]+)/([0-9]+)/(.*)$ ../include/class/slir/?w=$1&h=$2&i=/upload/image/$3 [L,QSA]
+RewriteRule ^image/w([0-9]+)/h([0-9]+)/(.*)$ ../include/class/slir/?w=$1&h=$2&c=$1:$2&i=/upload/image/$3 [L,QSA]
+RewriteRule ^image/h([0-9]+)/w([0-9]+)/(.*)$ ../include/class/slir/?w=$2&h=$1&c=$2:$1&i=/upload/image/$3 [L,QSA]
+RewriteRule ^image/h([0-9]+)/(.*)$ ../include/class/slir/?h=$1&i=/upload/image/$2 [L,QSA]
+RewriteRule ^image/w([0-9]+)/(.*)$ ../include/class/slir/?w=$1&i=/upload/image/$2 [L,QSA]

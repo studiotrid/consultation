@@ -1,0 +1,137 @@
+# #-#-#-#-#  code.pot (PACKAGE VERSION)  #-#-#-#-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"#-#-#-#-#  code.pot (PACKAGE VERSION)  #-#-#-#-#\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-18 21:09+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  smarty.pot  #-#-#-#-#\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#: ../includes.php:31
+msgid "Logged in"
+msgstr ""
+
+#: ../includes.php:35
+msgid "Wrong data entered // Please, try again!"
+msgstr ""
+
+#: frontpage.tpl:2
+msgid "Welcome to Your Personal Astro-Energetic Space"
+msgstr ""
+
+#: frontpage.tpl:3
+msgid ""
+"This is where your journey into awareness, balance, and your inner map of "
+"time begins."
+msgstr ""
+
+#: frontpage.tpl:22
+msgid "Next scheduled consultation"
+msgstr ""
+
+#: frontpage.tpl:22
+msgid "in"
+msgstr ""
+
+
+#: layout.tpl:12
+msgid "Consultation Page"
+msgstr ""
+
+#: layout.tpl:13 login.tpl:4
+msgid "Consultation"
+msgstr ""
+
+#: login.tpl:6
+msgid "Username"
+msgstr ""
+
+#: login.tpl:7
+msgid "Enter your username"
+msgstr ""
+
+#: login.tpl:11
+msgid "Password"
+msgstr ""
+
+#: login.tpl:12
+msgid "Enter your password"
+msgstr ""
+
+#: login.tpl:18
+msgid "Log in"
+msgstr ""
+
+#: menu.tpl:5
+msgid "Logout"
+msgstr ""
+
+#: moduli/comment.tpl:3
+msgid "Comment:"
+msgstr ""
+
+#: moduli/audio.tpl:2
+msgid "Click to play Audio"
+msgstr ""
+
+#: moduli/audio.tpl:2
+msgid "AUDIO CONSULTATION"
+msgstr ""
+
+
+#: TIPOVI KONSULTACIJA
+msgid "Classical astrological consultation"
+msgstr ""
+
+msgid "Astro Coaching consultation"
+msgstr ""
+
+msgid "AstroHealing consultation"
+msgstr ""
+
+msgid "Local Space Astrology consultation"
+msgstr ""
+
+msgid "Natal chart rectification consultation"
+msgstr ""
+
+msgid "Venus Balance consultation"
+msgstr ""
+
+msgid "Consciousness Technology consultation"
+msgstr ""
+
+msgid "Energetic Astrology consultation"
+msgstr ""
+
+msgid "Astro Meridians consultation"
+msgstr ""
+
+msgid "Messanger Guide consultation"
+msgstr ""
+
+msgid "Journey Guide consultation"
+msgstr ""
+
+msgid "Moon Activation consultation"
+msgstr ""
+
+msgid "Karmic Integration"
+msgstr ""
+
+msgid "Karmic Beliefs"
+msgstr ""

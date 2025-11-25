@@ -1,0 +1,43 @@
+
+#: TIPOVI KONSULTACIJA
+msgid "Classical astrological consultation"
+msgstr ""
+
+msgid "Astro Coaching consultation"
+msgstr ""
+
+msgid "AstroHealing consultation"
+msgstr ""
+
+msgid "Local Space Astrology consultation"
+msgstr ""
+
+msgid "Natal chart rectification consultation"
+msgstr ""
+
+msgid "Venus Balance consultation"
+msgstr ""
+
+msgid "Consciousness Technology consultation"
+msgstr ""
+
+msgid "Energetic Astrology consultation"
+msgstr ""
+
+msgid "Astro Meridians consultation"
+msgstr ""
+
+msgid "Messanger Guide consultation"
+msgstr ""
+
+msgid "Journey Guide consultation"
+msgstr ""
+
+msgid "Moon Activation consultation"
+msgstr ""
+
+msgid "Karmic Integration"
+msgstr ""
+
+msgid "Karmic Beliefs"
+msgstr ""

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "smarty/smarty": "^3",
+        "smarty-gettext/smarty-gettext": "^1.7"
+    }
+}
