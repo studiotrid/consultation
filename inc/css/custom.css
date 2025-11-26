@@ -296,6 +296,16 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
         background-size:100% ;
     }
     
+    .testModul{
+        background:url('/img/test.png') no-repeat top center;
+        background-size:100% ;
+    }
+    
+    .testModultest{
+        background:url('/img/testTest.png') no-repeat top center;
+        background-size:100% ;
+    }
+    
     .ui-widget-content{
      background:transparent !important;
      border:none !important;   
