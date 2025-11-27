@@ -85,7 +85,6 @@ class Konsultacije
                                 
                                 foreach($testovi as $ovajTest){
                                     if ($ovajTest['datum']<date('Y-m-d')){
-                                        
                                         $prikaziTest['planeta']=$ovajTest['planetaen'];
                                         $prikaziTest['planetaen']=$ovajTest['planetaen'];
                                         $prikaziTest['centar']=$ovajTest['centar'];
@@ -93,21 +92,29 @@ class Konsultacije
                                         $prikaziTest['intenzitet']=$ovajTest['intenzitet'];
                                         $prikaziTest['datum']=$ovajTest['datum'];
                                         $prikaziTest['vreme']=$ovajTest['vreme'];
-                                        if($ovajTest['uspeh']=='') $smarty->assign('modul'.$tip['type'], $prikaziTest);
+                                        
+                                         if($ovajTest['uspeh']=='' ) {
+                                            $neuradjeniTest[]=$prikaziTest;
+                                        }   
                                     }
+
                                 }
+
+                                // Prikazuje da postoji dodeljen test ali nije urađen
+                                if(isset($neuradjeniTest) && count($neuradjeniTest)>0)
+                                    $smarty->assign('modultest', $neuradjeniTest);
                                 
-                                
+
+
                                 $sviTestovi = $this->db->fetch_array("SELECT * from test where konsultacija='".$id."' and planete != ''");
                                 $broj=0;
                                 foreach($sviTestovi as $testovi){
-                                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    
                                                 $testPlanete=explode(',',$testovi['planete']);
                                                 if (count($testPlanete)>1){
                                                     $sveplanete=$this->db->fetch_array("SELECT * from cakre ");
                                                     foreach($sveplanete as $planeta){
-                                                      //  $stub=$db->query_first("SELECT * from cakre where cakra in ('".$testovi['planete']."')");
-                                                        
+
                                                         $testStub['planeta']=$planeta['planeta'];
                                                         $testStub['znak']=$planeta['znak'];
                                                         
@@ -147,8 +154,7 @@ class Konsultacije
                                                     
                                                     $sveplanete=$this->db->fetch_array("SELECT * from cakre ");
                                                     foreach($sveplanete as $planeta){
-                                                      //  $stub=$db->query_first("SELECT * from cakre where cakra in ('".$testovi['planete']."')");
-                                                        
+
                                                         $testStub['planeta']=$planeta['planeta'];
                                                         $testStub['znak']=$planeta['znak'];
                                                        
@@ -170,13 +176,8 @@ class Konsultacije
                                                         if ((isset($testStub['procenat']) and $testStub['procenat']=='') or !isset($testStub['procenat'])) $testStub['procenat']=0;
                                                         
                                                         $procentiPlan[]=$planeta['planeta'];
-                                                        
-                                                        
-                                                      //  if(in_array($planeta['cakra'],$testPlanete)) {
-                                                            $zaopis[]=$planeta['planeta'];
-                                                            $procentiProc[]=$testStub['procenat'];
-                                                            
-                                                      //  }
+                                                        $zaopis[]=$planeta['planeta'];
+                                                        $procentiProc[]=$testStub['procenat'];
                                                         $ceotest[]=$testStub; 
                                                     
                                                     }
@@ -212,18 +213,18 @@ class Konsultacije
                                                 $jedantest['planete']=$tessss;
                                                 $jedantest['tip']=$testovi['tip'];
                                                 
-                                               //$jedantest['planete']=$testOpis;
                                                 $jedantest['datum']=$testovi['vreme'];
+                                                $jedantest['vreme']=$testovi['vreme'];
                                                 $jedantest['broj']=$broj;
                                                 $jedantest['stubovi']=$ceotest;
                                  
                                                 $broj++;
                                                 $svitesss[]=$jedantest;
                                                 unset($ceotest,$jedantest,$procentiPlan,$procentiProc,$zaopis);
-                                    
-                                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                               
+                                                                                 
                                   }
+
+                                  //// Prikazuje rezultate urađenih testova za grafikone, to je ustvari $graf promenjiva u Smarty
                                   if(isset($svitesss) && count($svitesss)>0)
                                      $smarty->assign('modul'.$tip['type'].'Test', $svitesss);   
                                     
@@ -242,7 +243,7 @@ class Konsultacije
                     
                 public function getLast($user){
                     $last = $this->db->query_first("SELECT * from konsultacije where user_id='$user' and startTime < now() order by startTime desc");
-                    if($last['id']!='')
+                    if(isset($last) && $last['id']!='')
                         return $this->getKonsultacija($last['id']);
                     else return false;
                     }

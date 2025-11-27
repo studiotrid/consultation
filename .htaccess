@@ -1,0 +1,21 @@
+RewriteEngine On 
+RewriteCond %{SERVER_PORT} 80 
+RewriteRule ^(.*)$ https://consultation.profesionalnaastrologija.com/$1 [R=301,L]
+
+Options -Indexes
+Options +FollowSymlinks
+RewriteBase /
+
+
+
+RewriteRule ^image/([0-9]+)/([0-9]+)/(.*)$ /include/class/slir/?w=$1&h=$2&i=/upload/image/$3 [L,QSA]
+RewriteRule ^image/w([0-9]+)/h([0-9]+)/(.*)$ /include/class/slir/?w=$1&h=$2&c=$1:$2&i=/upload/image/$3 [L,QSA]
+RewriteRule ^image/h([0-9]+)/w([0-9]+)/(.*)$ /include/class/slir/?w=$2&h=$1&c=$2:$1&i=/upload/image/$3 [L,QSA]
+RewriteRule ^image/h([0-9]+)/(.*)$ /include/class/slir/?h=$1&i=/upload/image/$2 [L,QSA]
+RewriteRule ^image/w([0-9]+)/(.*)$ /include/class/slir/?w=$1&i=/upload/image/$2 [L,QSA]
+
+RewriteRule ^type/([0-9]+)/$ /index.php?tip=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.php?SEO=$1 [L,QSA]

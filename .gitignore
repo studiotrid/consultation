@@ -1,0 +1,44 @@
+# Dependencies
+/vendor/
+composer.lock
+
+# Cache and compiled templates
+/cache/*
+/templates_c/*
+!/templates_c/.gitkeep
+!/cache/.gitkeep
+
+# Uploads
+/upload/image/*
+/upload/file/*
+/upload/media/*
+!/upload/image/.gitkeep
+!/upload/file/.gitkeep
+!/upload/media/.gitkeep
+
+# Logs
+error_log
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# CMS specific
+@CMS/templates_c/*
+@CMS/error_log
+
+# Sensitive files
+/inc/conf/*.php
+!inc/conf/config.example.php

@@ -8,7 +8,7 @@
     <div class="gradient-border blue col-12 col-md-6 p-4 px-4">
         {if isset($levo)}{$levo}
         {else}
-        {if isset($lastKonsultacija)}
+        {if isset($lastKonsultacija) && is_array($lastKonsultacija)}
             <div class="modulHolder">
             {foreach from=$lastKonsultacija item=moduls name=mso}
                 {if $smarty.foreach.mso.first}
