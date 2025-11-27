@@ -42,3 +42,4 @@ Thumbs.db
 # Sensitive files
 /inc/conf/*.php
 !inc/conf/config.example.php
+include/conf/env.php
