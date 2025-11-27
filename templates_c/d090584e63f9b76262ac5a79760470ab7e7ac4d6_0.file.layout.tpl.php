@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-19 02:06:30
+/* Smarty version 3.1.46, created on 2025-11-27 17:32:38
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/layout.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_691d181689f316_59364353',
+  'unifunc' => 'content_69287d267fe581_81576464',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'd090584e63f9b76262ac5a79760470ab7e7ac4d6' => 
     array (
       0 => '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/layout.tpl',
-      1 => 1763514388,
+      1 => 1764261156,
       2 => 'file',
     ),
   ),
@@ -22,7 +22,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
     'file:footer.tpl' => 1,
   ),
 ),false)) {
-function content_691d181689f316_59364353 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69287d267fe581_81576464 (Smarty_Internal_Template $_smarty_tpl) {
 echo smarty_function_locale(array('path'=>"../locale",'domain'=>"messages"),$_smarty_tpl);?>
 
 <!DOCTYPE html>
@@ -62,9 +62,11 @@ array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);
     <meta http-equiv="Expires" content="-1" />
 
     <link type="text/css" rel="stylesheet" href="/inc/css/bootstrap.min.css">
+     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+
     <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?<?php echo $_smarty_tpl->tpl_vars['rnd']->value;?>
 "/>
-
+   
     <!--<?php echo '<script'; ?>
  src="/inc/js/jquery-1.12.4.min.js"><?php echo '</script'; ?>
 >-->
@@ -74,7 +76,9 @@ array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);
     <?php echo '<script'; ?>
  src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"><?php echo '</script'; ?>
 >
-    
+    <?php echo '<script'; ?>
+ src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"><?php echo '</script'; ?>
+>
     <?php echo '<script'; ?>
  type="text/javascript">
         var language="<?php echo $_SESSION['language'];?>
@@ -174,5 +178,6 @@ echo '</script'; ?>
 ><?php }?>
 
 
-</body></html><?php }
+</body></html>
+<?php }
 }

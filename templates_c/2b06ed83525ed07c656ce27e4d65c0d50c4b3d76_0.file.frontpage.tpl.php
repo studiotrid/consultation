@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-20 14:36:46
+/* Smarty version 3.1.46, created on 2025-11-27 17:28:15
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/frontpage.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_691f196e8de437_26554353',
+  'unifunc' => 'content_69287c1fe760c1_75884407',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '2b06ed83525ed07c656ce27e4d65c0d50c4b3d76' => 
     array (
       0 => '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/frontpage.tpl',
-      1 => 1763645803,
+      1 => 1764203996,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_691f196e8de437_26554353 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69287c1fe760c1_75884407 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_checkPlugins(array(0=>array('file'=>'/home/admin/web/consultation.profesionalnaastrologija.com/public_html/vendor/smarty/smarty/libs/plugins/modifier.date_format.php','function'=>'smarty_modifier_date_format',),));
 ?>
 <div class="container" style="margin-top:60px;text-align:center;margin-bottom:60px;">
@@ -49,7 +49,7 @@ array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?></h3>
 echo $_smarty_tpl->tpl_vars['levo']->value;?>
 
         <?php } else { ?>
-        <?php if ((isset($_smarty_tpl->tpl_vars['lastKonsultacija']->value))) {?>
+        <?php if ((isset($_smarty_tpl->tpl_vars['lastKonsultacija']->value)) && is_array($_smarty_tpl->tpl_vars['lastKonsultacija']->value)) {?>
             <div class="modulHolder">
             <?php
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['lastKonsultacija']->value, 'moduls', false, NULL, 'mso', array (

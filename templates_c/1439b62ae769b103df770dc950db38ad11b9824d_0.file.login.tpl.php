@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-06 16:16:54
+/* Smarty version 3.1.46, created on 2025-11-27 17:38:49
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/login.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_690cbbe6cd8c75_59453759',
+  'unifunc' => 'content_69287e996c9468_24411305',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_690cbbe6cd8c75_59453759 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69287e996c9468_24411305 (Smarty_Internal_Template $_smarty_tpl) {
 ?>  
   <main class="wrap">
     <form class="card gradient-border" action="#" method="post" autocomplete="on">

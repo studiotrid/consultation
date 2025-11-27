@@ -245,7 +245,7 @@ function hideHeader(tabelaID){
     left:0;
 }
 .linija{
-    border-bottom:1px dashed #DDD;
+    border-bottom: 1px dashed #346;
     background:transparent;
     height:0px;
     width:100%;

@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-12 14:15:46
+/* Smarty version 3.1.46, created on 2025-11-27 17:28:15
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/footer.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69148882282e84_89090444',
+  'unifunc' => 'content_69287c1fe8bb44_70211471',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_69148882282e84_89090444 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69287c1fe8bb44_70211471 (Smarty_Internal_Template $_smarty_tpl) {
 if ((isset($_smarty_tpl->tpl_vars['logged']->value))) {?>
     <div class="logo">
     <?php if ((isset($_smarty_tpl->tpl_vars['logo']->value))) {?>

@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-18 22:07:49
+/* Smarty version 3.1.46, created on 2025-11-27 17:28:15
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/moduli/audio.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_691ce025949823_28958541',
+  'unifunc' => 'content_69287c1fdf0000_75811854',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_691ce025949823_28958541 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69287c1fdf0000_75811854 (Smarty_Internal_Template $_smarty_tpl) {
 if ((isset($_smarty_tpl->tpl_vars['modulaudio']->value)) && $_smarty_tpl->tpl_vars['modulaudio']->value != '') {?>
 <div class="audioModul ikona" data-audio="<?php echo $_smarty_tpl->tpl_vars['modulaudio']->value;?>
 " title="<?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());

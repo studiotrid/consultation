@@ -3,7 +3,7 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL & ~E_DEPRECATED);
     
-	define("LOCAL",  true); // PARAMETERS FOR LOCAL AND REMOTE
+	define("LOCAL",  false); // PARAMETERS FOR LOCAL AND REMOTE
 	if(LOCAL===true){ // local
         define("ROOT",  'D:\consulting\\');
         define("WEBROOT",  'D:\\consulting');

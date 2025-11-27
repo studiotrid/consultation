@@ -16,9 +16,10 @@
     <meta http-equiv="Expires" content="-1" />
 
     <link type="text/css" rel="stylesheet" href="/inc/css/bootstrap.min.css">
-    <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?{$rnd}"/>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 
+    <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?{$rnd}"/>
+   
     <!--<script src="/inc/js/jquery-1.12.4.min.js"></script>-->
     <script src="/inc/js/jquery-3.7.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
