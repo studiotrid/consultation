@@ -97,7 +97,7 @@ $db->query(
 // Fetch the card name from phase-appropriate table
 if ($isFaza2) {
     $kontal = $db->query_first(
-        "SELECT andjeo AS naziv FROM andjeli WHERE id='" . $karta . "'"
+        "SELECT naziv FROM karte_boginje WHERE id='" . $karta . "'"
     );
     $imgPath = '/img/boginje/' . $karta . '.jpg';
 } else {

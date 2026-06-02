@@ -470,9 +470,9 @@ class Konsultacije
 
                                 if ($kpIsFaza2) {
                                     $kpKarte = $this->db->fetch_array(
-                                        "SELECT ik.*, a.andjeo AS naziv " .
+                                        "SELECT ik.*, kb.naziv AS naziv " .
                                         "FROM izvucene_karte ik " .
-                                        "LEFT JOIN andjeli a ON a.id = ik.karta " .
+                                        "LEFT JOIN karte_boginje kb ON kb.id = ik.karta " .
                                         "WHERE ik.konsultacija='" . $konsult['id'] . "' " .
                                         "ORDER BY ik.datum ASC"
                                     );
@@ -554,7 +554,7 @@ class Konsultacije
 
                                 if ($kpIsFaza2) {
                                     $kpKontalacije = $this->db->fetch_array(
-                                        "SELECT id, andjeo AS naziv FROM andjeli WHERE id BETWEEN 1 AND 72 ORDER BY id ASC"
+                                        "SELECT id, naziv FROM karte_boginje WHERE id BETWEEN 1 AND 72 ORDER BY id ASC"
                                     );
                                 } else {
                                     $kpKontalacije = $this->db->fetch_array(
@@ -1399,9 +1399,9 @@ class Konsultacije
                                 }
 
                                 $andjeoRecord = $this->db->query_first(
-                                    "SELECT andjeo FROM andjeli WHERE id='".$andjeoId."'"
+                                    "SELECT naziv FROM karte_boginje WHERE id='".$andjeoId."'"
                                 );
-                                $andjeoIme = ($andjeoRecord && isset($andjeoRecord['andjeo'])) ? trim($andjeoRecord['andjeo']) : '';
+                                $andjeoIme = ($andjeoRecord && isset($andjeoRecord['naziv'])) ? trim($andjeoRecord['naziv']) : '';
                                 if($andjeoIme === ''){
                                     $shouldRenderModule = false;
                                     break;
