@@ -1,3 +1,18 @@
+  {if isset($graf.nema_planete) && $graf.nema_planete}
+    {* Test without planets - show only test cilja *}
+    <div class="test"><b>{t}{$graf.planete}{/t}</b></div>
+    {if isset($graf.test_cilja) && $graf.test_cilja|trim neq ''}
+        <div class="test-cilja-blok">
+                <h3>Test cilja</h3>
+                <div class="test-cilja-tekst">{$graf.test_cilja|escape|nl2br}</div>
+        </div>
+    {else}
+        <div class="test-cilja-blok">
+                <p><em>Nema dostupnih podataka za ovaj test.</em></p>
+        </div>
+    {/if}
+  {else}
+    {* Test with planets - show full graph and disbalans *}
   <div class="test">{t}{$graf.planete}{/t}<br /></b>{if $graf.tip eq 'yang'}{t}Najveća potreba{/t}{else}{t}Najveći disbalans{/t}{/if}: <span style="color:red">{t}{$graf.disbalans}{/t}</span></div>
   {if !isset($graf.samojedna)}
   
@@ -74,6 +89,14 @@
         </table>
     </div>
   {/if}{* KRAJ SAMO JEDNA PLANETA USPRAVNO *}
+
+    {if isset($graf.test_cilja) && $graf.test_cilja|trim neq ''}
+        <div class="test-cilja-blok">
+                <h3>Test cilja</h3>
+                <div class="test-cilja-tekst">{$graf.test_cilja|escape|nl2br}</div>
+        </div>
+    {/if}
+  {/if}{* END Test with planets *}
 
 
 {literal}
@@ -176,6 +199,7 @@ function hideHeader(tabelaID){
 }
 
 .grafikon{
+    width: 100%;
     margin-top:60px;
     padding-right:30px;
 }
@@ -374,5 +398,15 @@ function hideHeader(tabelaID){
     left:30px;
     top:0;
     box-shadow: 0px 0px 2px #DADADA;
+}
+.test-cilja-blok{
+    border:1px solid #257C9E;
+    padding:15px;
+    margin:20px 10px 0 10px;
+    background:transparent;
+}
+.test-cilja-tekst{
+    white-space:pre-wrap;
+    line-height:1.4em;
 }
 </style>

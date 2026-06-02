@@ -1,0 +1,8 @@
+2026-01-28 21:30:57 - testovi.php executed for user: 2708
+2026-01-28 21:30:57 - Found 2 tests
+2026-01-28 21:30:57 - Processing completed test ID 2400
+2026-01-28 21:30:57 - Test ID 2401 needs to be taken (no answers)
+2026-01-28 21:30:57 - Formatting 1 completed tests for display
+2026-01-28 21:30:57 - Assigning 1 formatted tests to $nevezaniTestovi
+2026-01-28 21:30:57 - Found 1 tests that need to be taken
+2026-01-28 21:30:57 - Total formatted items: 2

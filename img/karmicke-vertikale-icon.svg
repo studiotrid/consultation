@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Karmicke Vertikale</title>
+  <desc id="desc">Ikonica sa vertikalnom osom, cvorovima i tabelarnim prikazom.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2b4f7a"/>
+      <stop offset="100%" stop-color="#11273f"/>
+    </linearGradient>
+    <linearGradient id="axis" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f3d58b"/>
+      <stop offset="100%" stop-color="#d1a742"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="120" height="120" rx="18" fill="url(#bg)"/>
+
+  <line x1="30" y1="18" x2="30" y2="110" stroke="url(#axis)" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="30" cy="28" r="7" fill="#f7e6ba"/>
+  <circle cx="30" cy="50" r="7" fill="#f7e6ba"/>
+  <circle cx="30" cy="72" r="7" fill="#f7e6ba"/>
+  <circle cx="30" cy="94" r="7" fill="#f7e6ba"/>
+
+  <rect x="48" y="22" width="62" height="84" rx="7" fill="#f9fbff" opacity="0.96"/>
+  <rect x="54" y="30" width="50" height="10" rx="3" fill="#c6d5eb"/>
+
+  <rect x="54" y="46" width="19" height="12" rx="2" fill="#e7eef9"/>
+  <rect x="75" y="46" width="29" height="12" rx="2" fill="#d9e8ff"/>
+
+  <rect x="54" y="62" width="19" height="12" rx="2" fill="#e7eef9"/>
+  <rect x="75" y="62" width="29" height="12" rx="2" fill="#d9e8ff"/>
+
+  <rect x="54" y="78" width="19" height="12" rx="2" fill="#e7eef9"/>
+  <rect x="75" y="78" width="29" height="12" rx="2" fill="#d9e8ff"/>
+</svg>

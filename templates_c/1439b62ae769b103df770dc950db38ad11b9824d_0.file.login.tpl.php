@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-27 17:38:49
+/* Smarty version 3.1.46, created on 2026-03-12 14:45:51
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/login.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69287e996c9468_24411305',
+  'unifunc' => 'content_69b2c38fa30031_61917794',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '1439b62ae769b103df770dc950db38ad11b9824d' => 
     array (
       0 => '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/login.tpl',
-      1 => 1762442206,
+      1 => 1771336237,
       2 => 'file',
     ),
   ),
@@ -20,15 +20,14 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_69287e996c9468_24411305 (Smarty_Internal_Template $_smarty_tpl) {
-?>  
-  <main class="wrap">
+function content_69b2c38fa30031_61917794 (Smarty_Internal_Template $_smarty_tpl) {
+?><main class="wrap">
     <form class="card gradient-border" action="#" method="post" autocomplete="on">
       <h1><?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());
 $_block_repeat=true;
 echo smarty_block_t(array(), null, $_smarty_tpl, $_block_repeat);
 while ($_block_repeat) {
-ob_start();?>Consultation<?php $_block_repeat=false;
+ob_start();?>Consulting page<?php $_block_repeat=false;
 echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
 }
 array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?></h1>
@@ -71,7 +70,16 @@ echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
 array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?>">
 
       <div class="gap"></div>
-
+      <div style="text-align:center; margin-bottom:10px;">
+        <a href="forgot-password.php" class="forgot-link" style="color:#fff;"><?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());
+$_block_repeat=true;
+echo smarty_block_t(array(), null, $_smarty_tpl, $_block_repeat);
+while ($_block_repeat) {
+ob_start();?>Forgot your password?<?php $_block_repeat=false;
+echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
+}
+array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?></a>
+      </div>
       <div class="actions">
         <div class="small">&nbsp;</div>
         <button type="submit" class="btn gradient-border"><?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());

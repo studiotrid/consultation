@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-27 17:28:15
+/* Smarty version 3.1.46, created on 2026-03-12 14:34:54
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/menu.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69287c1fe87cd0_68306398',
+  'unifunc' => 'content_69b2c0fe408f17_45296051',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'e50d7a0944731a63779d98bc87f4f1e84e66a331' => 
     array (
       0 => '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/menu.tpl',
-      1 => 1764204880,
+      1 => 1770297778,
       2 => 'file',
     ),
   ),
@@ -20,12 +20,22 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_69287c1fe87cd0_68306398 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69b2c0fe408f17_45296051 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="top">
     <div class="container">
-        <?php echo $_SESSION['loggedName'];?>
-
+        <a href="/" class="user-home-link"><?php echo $_SESSION['loggedName'];?>
+</a>
         <div class="float-end">
+            <a href="/notification-settings.php" class="notification-settings btn-icon" title="<?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());
+$_block_repeat=true;
+echo smarty_block_t(array(), null, $_smarty_tpl, $_block_repeat);
+while ($_block_repeat) {
+ob_start();?>Notification Settings<?php $_block_repeat=false;
+echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
+}
+array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?>">
+                <i class="fas fa-bell"></i>
+            </a>
             <a href="/?logout" class="logout btn gradient-border"><?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());
 $_block_repeat=true;
 echo smarty_block_t(array(), null, $_smarty_tpl, $_block_repeat);

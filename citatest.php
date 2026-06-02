@@ -1,8 +1,38 @@
 <?php
-$sviTestovi = $db->fetch_array("SELECT * from test where konsultacija='".$konsultacija['id']."' and korisnik='$ulogovan' and planete != ''");
+$sviTestovi = $db->fetch_array("SELECT * from test where konsultacija='".$konsultacija['id']."' and korisnik='$ulogovan'");
 $broj=0;
 foreach($sviTestovi as $testovi){
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Get test cilj text
+                $testCiljTekst = '';
+                $testCiljId = (isset($testovi['cilj'])) ? intval($testovi['cilj']) : 0;
+                if ($testCiljId > 0) {
+                    $ciljCol = $konsultacije->getTestCiljAnswerColumn();
+                    if ($ciljCol !== null) {
+                        $testCiljRow = $db->query_first("SELECT * FROM test_cilja WHERE ID='".$testCiljId."'");
+                        if ($testCiljRow && isset($testCiljRow[$ciljCol])) {
+                            $testCiljTekst = $testCiljRow[$ciljCol];
+                        }
+                    }
+                }
+
+                // Check if test has planets assigned
+                $imaPlanete = !empty($testovi['planete']) && trim($testovi['planete']) != '';
+                
+                // If test has no planets, only show test cilja
+                if (!$imaPlanete) {
+                    $jedantest = array();
+                    $jedantest['planete'] = 'TEST CILJA';
+                    $jedantest['tip'] = isset($testovi['tip']) ? $testovi['tip'] : '';
+                    $jedantest['datum'] = $testovi['vreme'];
+                    $jedantest['broj'] = $broj;
+                    $jedantest['test_cilja'] = $testCiljTekst;
+                    $jedantest['nema_planete'] = true; // Flag to skip planet-related display
+                    $broj++;
+                    $svitesss[] = $jedantest;
+                    continue; // Skip planet processing
+                }
+
                 $testPlanete=explode(',',$testovi['planete']);
                 if (count($testPlanete)>1){
                     $sveplanete=$db->fetch_array("SELECT * from cakre ");
@@ -117,6 +147,7 @@ foreach($sviTestovi as $testovi){
                 $jedantest['datum']=$testovi['vreme'];
                 $jedantest['broj']=$broj;
                 $jedantest['stubovi']=$ceotest;
+                $jedantest['test_cilja']=$testCiljTekst;
  
                 $broj++;
                 $svitesss[]=$jedantest;

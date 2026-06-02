@@ -1,0 +1,90 @@
+00 naslovna Karta 88 konstelacija.png
+1. Andromeda.jpg
+10. Caleum.jpg
+11. Camelopardis.jpg
+12. Cancer.jpg
+13. Canes Venatici.jpg
+14. Canis Major.jpg
+15. Canis Minor.jpg
+16. Capricornus.jpg
+17. Carina.jpg
+18. Cassiopeia.jpg
+19. Centaurus.jpg
+2. Antlia_.jpg
+20. Cepheus.jpg
+21. Cetus.jpg
+22. Chameleon.jpg
+23. Circinus.jpg
+24. Columba.jpg
+25. Coma Berenices.jpg
+26. Corona Autstralis.jpg
+27. Corona Borealis.jpg
+28. Corvus.jpg
+29. Crater.jpg
+3. Apus.jpg
+30. Crux.jpg
+31. Cygnus.jpg
+32. Delphinus.jpg
+33. Dorado.jpg
+34. Draco.jpg
+35. Equuelus.jpg
+36. Eridanus.jpg
+37. Fornax.jpg
+38. Gemini.jpg
+39. Grus.jpg
+4. Aquarius.jpg
+40. Hercules.jpg
+41. Horologium.jpg
+42. Hydra.jpg
+43. Hydrus.jpg
+44. Indus.jpg
+45. Lacerta.jpg
+46. Leo Minor.jpg
+47. Leo.jpg
+48. Lepus.jpg
+49. Libra.jpg
+5. Aquila.jpg
+50. Lupus.jpg
+51. Lynx.jpg
+52. Lyra.jpg
+53. Mensa.jpg
+54. Microscopium.jpg
+55. Monoceros.jpg
+56. Musca.jpg
+57. Norma.jpg
+58. Octans.jpg
+59. Ophiuchus.jpg
+6. Ara.jpg
+60. Orion.jpg
+61. Pavo.jpg
+62. Pegasus.jpg
+63. Perseus.jpg
+64. Phoenix.jpg
+65. Pictor.jpg
+66. Pisces.jpg
+67. Piscis Austrinus.jpg
+68. Puppis.jpg
+69. Pyxis.jpg
+7. Aries.jpg
+70. Reticulum.jpg
+71. Sagitta.jpg
+72. Sagittarius.jpg
+73. Scorpius.jpg
+74. Sculptor.jpg
+75. Scutum.jpg
+76. Serpens.jpg
+77. Sextans.jpg
+78. Taurus.jpg
+79. Telescopium.jpg
+8. Auriga.jpg
+80. Triangulum Australe.jpg
+81. Triangulum.jpg
+82. Tucana.jpg
+83. Ursa Major.jpg
+84. Ursa Minor.jpg
+85. Vela.jpg
+86. Virgo.jpg
+87. Volans.jpg
+88. Vulpecula.jpg
+9. Bootes.jpg
+txt.txt

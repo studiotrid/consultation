@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2025-11-27 17:32:38
+/* Smarty version 3.1.46, created on 2026-03-12 14:34:54
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/layout.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69287d267fe581_81576464',
+  'unifunc' => 'content_69b2c0fe401e72_25825853',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'd090584e63f9b76262ac5a79760470ab7e7ac4d6' => 
     array (
       0 => '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/layout.tpl',
-      1 => 1764261156,
+      1 => 1770297739,
       2 => 'file',
     ),
   ),
@@ -22,7 +22,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
     'file:footer.tpl' => 1,
   ),
 ),false)) {
-function content_69287d267fe581_81576464 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69b2c0fe401e72_25825853 (Smarty_Internal_Template $_smarty_tpl) {
 echo smarty_function_locale(array('path'=>"../locale",'domain'=>"messages"),$_smarty_tpl);?>
 
 <!DOCTYPE html>
@@ -58,11 +58,21 @@ echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
 array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);
 }?></title>
     
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#977141">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Consultation Portal">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/img/consultation-192.png">
+
+    
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="-1" />
 
     <link type="text/css" rel="stylesheet" href="/inc/css/bootstrap.min.css">
      <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?<?php echo $_smarty_tpl->tpl_vars['rnd']->value;?>
 "/>
@@ -124,7 +134,9 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);
 >
     <![endif]-->
 
-<body class="">
+<body class="<?php if ((isset($_smarty_tpl->tpl_vars['bodyClass']->value))) {
+echo $_smarty_tpl->tpl_vars['bodyClass']->value;
+}?>">
 <?php $_smarty_tpl->_subTemplateRender("file:header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), 0, false);
 ?>
 
@@ -149,6 +161,16 @@ echo $_smarty_tpl->tpl_vars['addition']->value;
  src="/inc/js/custom.js?<?php echo $_smarty_tpl->tpl_vars['rnd']->value;?>
 "><?php echo '</script'; ?>
 >
+        <?php echo '<script'; ?>
+>
+                // Register service worker to enable PWA install prompt
+                if ('serviceWorker' in navigator) {
+                        window.addEventListener('load', function() {
+                                navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+                        });
+                }
+        <?php echo '</script'; ?>
+>
 
     </head>
     <?php if ((isset($_smarty_tpl->tpl_vars['additional_js']->value))) {
@@ -169,13 +191,148 @@ echo '<script'; ?>
 ><?php echo $_smarty_tpl->tpl_vars['additional_head_script']->value;
 echo '</script'; ?>
 ><?php }?>
-    
+    <?php echo '<script'; ?>
+ src="/inc/js/notification-status.js"><?php echo '</script'; ?>
+>
 
 <?php if ((isset($_smarty_tpl->tpl_vars['additional_body_script']->value))) {
 echo '<script'; ?>
 ><?php echo $_smarty_tpl->tpl_vars['additional_body_script']->value;
 echo '</script'; ?>
 ><?php }?>
+
+<style>
+    #pwa-install-banner { 
+        position: fixed; 
+        right: 16px; 
+        bottom: 16px; 
+        z-index: 9998; 
+        background: #977141; 
+        color: #fff; 
+        padding: 12px 14px; 
+        border-radius: 12px; 
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15); 
+        display: none;
+        max-width: calc(100% - 32px);
+        word-wrap: break-word;
+        animation: slideInUp 0.5s ease-out;
+    }
+    #pwa-install-banner button { 
+        margin-left: 10px; 
+        background: #fff; 
+        color: #977141; 
+        border: 0; 
+        padding: 8px 12px; 
+        border-radius: 10px; 
+        font-weight: 600; 
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    #pwa-install-banner button:disabled { 
+        opacity: 0.6; 
+        cursor: not-allowed; 
+    }
+    @media (max-width: 600px) {
+        #pwa-install-banner {
+            right: 10px;
+            bottom: 10px;
+            left: 10px;
+            max-width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        #pwa-install-banner span {
+            flex: 1;
+        }
+        #pwa-install-banner button {
+            margin-left: 0;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    }
+    @keyframes slideInUp {
+        from {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<div id="pwa-install-banner" aria-live="polite">
+    <span><?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());
+$_block_repeat=true;
+echo smarty_block_t(array(), null, $_smarty_tpl, $_block_repeat);
+while ($_block_repeat) {
+ob_start();?>Install the app for quicker access<?php $_block_repeat=false;
+echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
+}
+array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?></span>
+    <button id="pwa-install-btn" type="button"><?php $_smarty_tpl->smarty->_cache['_tag_stack'][] = array('t', array());
+$_block_repeat=true;
+echo smarty_block_t(array(), null, $_smarty_tpl, $_block_repeat);
+while ($_block_repeat) {
+ob_start();?>Install<?php $_block_repeat=false;
+echo smarty_block_t(array(), ob_get_clean(), $_smarty_tpl, $_block_repeat);
+}
+array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);?></button>
+</div>
+
+<?php echo '<script'; ?>
+>
+    (function(){
+        var deferredPrompt;
+        var banner = document.getElementById('pwa-install-banner');
+        var btn = document.getElementById('pwa-install-btn');
+        
+        // Check if already running in PWA mode (standalone or fullscreen display-mode)
+        const isRunningAsApp = window.matchMedia('(display-mode: standalone)').matches ||
+                              window.matchMedia('(display-mode: fullscreen)').matches ||
+                              window.matchMedia('(display-mode: minimal-ui)').matches ||
+                              navigator.standalone === true; // iOS Safari
+
+        // If already running as app, don't show install prompt
+        if (isRunningAsApp) {
+            if (banner) banner.style.display = 'none';
+            return;
+        }
+
+        window.addEventListener('beforeinstallprompt', function(e){
+            // Only show if not already in app mode
+            if (!isRunningAsApp) {
+                e.preventDefault();
+                deferredPrompt = e;
+                if (banner) banner.style.display = 'block';
+            }
+        });
+
+        window.addEventListener('appinstalled', function(){
+            deferredPrompt = null;
+            if (banner) banner.style.display = 'none';
+        });
+
+        if (btn) {
+            btn.addEventListener('click', function(){
+                if (!deferredPrompt) return;
+                btn.disabled = true;
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.finally(function(){
+                    deferredPrompt = null;
+                    btn.disabled = false;
+                    if (banner) banner.style.display = 'none';
+                });
+            });
+        }
+    })();
+<?php echo '</script'; ?>
+>
 
 
 </body></html>

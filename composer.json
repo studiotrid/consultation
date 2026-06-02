@@ -1,6 +1,8 @@
 {
     "require": {
         "smarty/smarty": "^3",
-        "smarty-gettext/smarty-gettext": "^1.7"
+        "smarty-gettext/smarty-gettext": "^1.7",
+        "phpmailer/phpmailer": "^7.0",
+        "minishlink/web-push": "^8.0"
     }
 }

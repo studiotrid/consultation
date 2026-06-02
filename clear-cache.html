@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache & Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            text-align: center;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #977141;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:active {
+            background: #7f5f35;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            color: #1976d2;
+        }
+        .success {
+            background: #c8e6c9;
+            color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Clear Cache</h1>
+        <p>Kliknite dugme da očistite keš i ažurirate aplikaciju.</p>
+        
+        <button onclick="clearAllCache()">🗑️ Očisti Keš</button>
+        <button onclick="unregisterSW()">🔄 Ponovo Registruj SW</button>
+        <button onclick="reloadApp()">↻ Osveži Aplikaciju</button>
+        
+        <div id="status"></div>
+    </div>
+    
+    <script>
+        function showStatus(message, isSuccess = false) {
+            const status = document.getElementById('status');
+            status.className = 'status' + (isSuccess ? ' success' : '');
+            status.innerHTML = message;
+        }
+        
+        async function clearAllCache() {
+            try {
+                showStatus('Čišćenje keša...');
+                
+                // Clear all caches
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                
+                showStatus('✅ Keš očišćen! (' + cacheNames.length + ' cache-ova obrisano)', true);
+            } catch (err) {
+                showStatus('❌ Greška: ' + err.message);
+            }
+        }
+        
+        async function unregisterSW() {
+            try {
+                showStatus('Brisanje Service Worker-a...');
+                
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                
+                for (let registration of registrations) {
+                    await registration.unregister();
+                }
+                
+                showStatus('✅ Service Worker obrisan! (' + registrations.length + ' SW obrisano)', true);
+                
+                setTimeout(() => {
+                    showStatus('Ponovo registrujem Service Worker...', true);
+                    navigator.serviceWorker.register('/service-worker.js?v=' + Date.now(), {
+                        scope: '/',
+                        updateViaCache: 'none'
+                    }).then(() => {
+                        showStatus('✅ Service Worker ponovo registrovan!', true);
+                    });
+                }, 1000);
+                
+            } catch (err) {
+                showStatus('❌ Greška: ' + err.message);
+            }
+        }
+        
+        function reloadApp() {
+            showStatus('Osvežavam aplikaciju...', true);
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 500);
+        }
+        
+        // Show current status on load
+        window.addEventListener('load', async () => {
+            const cacheNames = await caches.keys();
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            
+            showStatus(`
+                Trenutno: ${cacheNames.length} cache-ova, ${registrations.length} Service Worker-a<br>
+                Kliknite dugme za čišćenje.
+            `);
+        });
+    </script>
+</body>
+</html>

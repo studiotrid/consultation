@@ -1,0 +1,629 @@
+================================================================================
+ZADATAK ZA AI: Implementacija Coach prikaza "Kosmička poruka" modula
+================================================================================
+
+Potrebno je kreirati READ-ONLY prikaz modula "Kosmička poruka" za Coach panel.
+Coach vidi šta je klijent izvukao od karata i koji su procenti — BEZ mogućnosti
+bilo kakve interakcije (nema izvlačenja, nema ocenjivanja).
+
+Sistem koristi PHP + Smarty 3 template engine. DB klasa ima metode:
+  $db->query_first("SELECT ...")   → jedan red kao asocijativni niz
+  $db->fetch_array("SELECT ...")   → niz redova
+  $db->query("INSERT/UPDATE ...")  → izvršava upit
+
+NAPOMENA: $db->escape() NE POSTOJI. Koristi intval() za brojeve i regex za datume.
+
+================================================================================
+BAZA PODATAKA
+================================================================================
+
+Tabele koje se koriste:
+
+1. konsultacije — glavni red klijenta
+   Relevantne kolone:
+     id                              INT
+     kosmicka_pocinje_od_datuma      DATE    (startni datum, npr. '2026-05-01')
+     kosmicka_ukupan_broj_dana       INT     (ukupan broj karata, npr. 43)
+     kosmicka_digitalno_izvlacenje   TINYINT (1=digitalno, 0=fizičko — za prikaz nije bitno)
+     faza                            INT     (1/3 → naslov A, 2/4 → naslov B, ostalo → naslov C)
+
+2. izvucene_karte — karte klijenta
+   Kolone:
+     id             INT AUTO_INCREMENT PK
+     konsultacija   INT   (FK na konsultacije.id)
+     datum          DATE
+     karta          TINYINT (1-88, NULL ako nije izvučena)
+     procenat       TINYINT (0-100, NULL ako nije ocenjeno)
+
+3. karte_kontalacije — katalog 88 konstelacija
+   VAŽNO: ime tabele je "karte_kontalacije" (jedno 's' — tipfeler u bazi!)
+   Kolone:
+     id      INT
+     naziv   VARCHAR
+
+4. karmicke_vertikale_termini — datumi koji dobijaju crveni okvir
+   Kolone:
+     konsultacija   INT
+     datum          DATE
+
+================================================================================
+SLIKE (već postoje na serveru)
+================================================================================
+
+  /img/konstelacija/0.jpg      ← leđa karte (zatvorena)
+  /img/konstelacija/1.jpg      ← konstelacija 1
+  ...
+  /img/konstelacija/88.jpg     ← konstelacija 88
+  /img/spirala.png             ← spirala ikonica u row labelu
+
+================================================================================
+PHP LOGIKA (dodati kao case u switch koji renderuje module)
+================================================================================
+
+Dodati entry u moduleVarMap niz:
+  'Kosmicka-poruka' => 'modulKosmickaPoruka'
+
+Dodati case u switch (čita konsultacija iz $konsult niza):
+
+---- POCETAK PHP CASE ----
+
+case "Kosmicka-poruka":
+    $kpFaza = isset($konsult['faza']) ? intval($konsult['faza']) : 0;
+    if ($kpFaza === 0) {
+        $shouldRenderModule = false;
+        break;
+    }
+
+    if ($kpFaza === 1 || $kpFaza === 3) {
+        $kpNaslov = 'Karmičko Uverenje Duše kroz inkarnacije';
+    } elseif ($kpFaza === 2 || $kpFaza === 4) {
+        $kpNaslov = 'OTKRIVANJE UVERENJA';
+    } else {
+        $kpNaslov = 'PORUKA VIŠEG JA';
+    }
+
+    if (empty($konsult['kosmicka_pocinje_od_datuma']) || empty($konsult['kosmicka_ukupan_broj_dana'])) {
+        $shouldRenderModule = false;
+        break;
+    }
+
+    $kpStart    = $konsult['kosmicka_pocinje_od_datuma'];
+    $kpBrojDana = intval($konsult['kosmicka_ukupan_broj_dana']);
+
+    // Fetch cards with constellation name
+    $kpKarte = $this->db->fetch_array(
+        "SELECT ik.*, kk.naziv " .
+        "FROM izvucene_karte ik " .
+        "LEFT JOIN karte_kontalacije kk ON kk.id = ik.karta " .
+        "WHERE ik.konsultacija='" . $konsult['id'] . "' " .
+        "ORDER BY ik.datum ASC"
+    );
+
+    if (!is_array($kpKarte) || count($kpKarte) === 0) {
+        $shouldRenderModule = false;
+        break;
+    }
+
+    // Fetch red-border dates
+    $kpVertDatumi = $this->db->fetch_array(
+        "SELECT datum FROM karmicke_vertikale_termini WHERE konsultacija='" . $konsult['id'] . "'"
+    );
+    $kpVertSet = array();
+    if (is_array($kpVertDatumi)) {
+        foreach ($kpVertDatumi as $vd) {
+            $kpVertSet[] = $vd['datum'];
+        }
+    }
+
+    $kpToday = date('Y-m-d');
+    foreach ($kpKarte as $kpK => $kpKar) {
+        $kpKarte[$kpK]['crveni_okvir'] = in_array($kpKar['datum'], $kpVertSet) ? 1 : 0;
+        $kpKarte[$kpK]['datum_prikaz'] = date('d.m.Y', strtotime($kpKar['datum']));
+        $kpKarte[$kpK]['je_proslo']    = ($kpKar['datum'] < $kpToday) ? 1 : 0;
+    }
+
+    // Row averages: past undrawn = 0%, today/future undrawn = row incomplete
+    $kpBrojRedova = (int)ceil(count($kpKarte) / 6);
+    $kpRedProseci = array();
+    for ($kpR = 0; $kpR < $kpBrojRedova; $kpR++) {
+        $kpSlice = array_slice($kpKarte, $kpR * 6, 6);
+        $kpSve   = true;
+        $kpSum   = 0;
+        $kpCnt   = 0;
+        foreach ($kpSlice as $kpS) {
+            if ($kpS['procenat'] !== null && $kpS['procenat'] !== '') {
+                $kpSum += intval($kpS['procenat']);
+                $kpCnt++;
+            } elseif ($kpS['je_proslo']) {
+                $kpCnt++; // counts as 0%
+            } else {
+                $kpSve = false;
+                break;
+            }
+        }
+        $kpRedProseci[$kpR] = ($kpSve && $kpCnt > 0) ? round($kpSum / $kpCnt, 1) : null;
+    }
+
+    $kpUkupniProsek = null;
+    $kpValidAvg = array_filter($kpRedProseci, function ($v) { return $v !== null; });
+    if (count($kpValidAvg) > 0) {
+        $kpUkupniProsek = round(array_sum($kpValidAvg) / count($kpValidAvg), 1);
+    }
+
+    // Column index of the last card (0-based within a row of 6)
+    $kpKolona = ($kpBrojDana % 6 === 0) ? 5 : ($kpBrojDana % 6) - 1;
+
+    // All cards drawn and scored?
+    $kpLast = end($kpKarte);
+    $kpDone = ($kpLast && !empty($kpLast['karta'])
+        && $kpLast['procenat'] !== null
+        && $kpLast['procenat'] !== '') ? 1 : 0;
+
+    $smarty->assign('modulKosmickaPoruka', array(
+        'naslov'        => $kpNaslov,
+        'konsultacija'  => $konsult['id'],
+        'karte'         => $kpKarte,
+        'red_proseci'   => $kpRedProseci,
+        'ukupni_prosek' => $kpUkupniProsek,
+        'kolona'        => $kpKolona,
+        'ukupan_broj'   => $kpBrojDana,
+        'zavrseno'      => $kpDone,
+        'today'         => $kpToday,
+    ));
+break;
+
+---- KRAJ PHP CASE ----
+
+================================================================================
+SMARTY TEMPLATE: templates/moduli/Kosmicka-poruka.tpl
+(READ-ONLY verzija — bez dialoga, bez selecta, bez draw dugmadi)
+================================================================================
+
+{if isset($modulKosmickaPoruka)}
+{assign var="kp" value=$modulKosmickaPoruka}
+{assign var="kpPlanete" value=["☉","♀","♂","♄"]}
+
+<div id="kosmicka-content-{$kp.konsultacija}" class="kosmicka-poruka-content">
+
+    <h3 class="kosmicka-naslov">{$kp.naslov}</h3>
+
+    {* Card enlargement modal *}
+    <div id="kosmicka-img-modal-{$kp.konsultacija}" style="display:none;">
+        <img id="kosmicka-img-modal-img-{$kp.konsultacija}" src="" alt="" style="max-width:100%;max-height:80vh;" />
+    </div>
+
+    <div class="kosmicka-grid-wrapper"
+         data-konsultacija="{$kp.konsultacija}"
+         data-kolona="{$kp.kolona}"
+         data-ukupan-broj="{$kp.ukupan_broj}"
+         data-ukupni-prosek="{if $kp.ukupni_prosek !== null}{$kp.ukupni_prosek}{else}-1{/if}">
+
+        {for $gIdx=0 to 3}
+            {assign var="gStart" value=$gIdx*24}
+            {if isset($kp.karte[$gStart])}
+            <div class="kosmicka-planet-group">
+                <div class="kosmicka-planet-symbol">{$kpPlanete[$gIdx]}</div>
+
+                <div class="kosmicka-rows-col">
+                {for $rLocal=0 to 3}
+                    {assign var="rGlobal" value=$gIdx*4+$rLocal}
+                    {assign var="rowStart" value=$gStart+$rLocal*6}
+                    {if isset($kp.karte[$rowStart])}
+                    <div class="kosmicka-cards-row" data-row="{$rGlobal}">
+                        <div class="kosmicka-row-label">
+                            <img src="/img/spirala.png" class="kosmicka-spirala" alt="" />
+                            <span class="kosmicka-row-num">{$rGlobal+1}.</span>
+                            <span class="kosmicka-row-avg" data-row="{$rGlobal}">
+                                {if isset($kp.red_proseci[$rGlobal]) && $kp.red_proseci[$rGlobal] !== null}
+                                    {$kp.red_proseci[$rGlobal]}%
+                                {/if}
+                            </span>
+                        </div>
+
+                        {for $cLocal=0 to 5}
+                            {assign var="cGlobal" value=$rowStart+$cLocal}
+                            {if isset($kp.karte[$cGlobal])}
+                            {assign var="kar" value=$kp.karte[$cGlobal]}
+                            <div class="kosmicka-card-slot{if $kar.crveni_okvir} kosmicka-red-border{/if}"
+                                 data-datum="{$kar.datum}"
+                                 data-idx="{$cGlobal}">
+
+                                <div class="kosmicka-card-date">{$kar.datum_prikaz}</div>
+
+                                <div class="kosmicka-card-name">
+                                    {if $kar.karta && $kar.karta != ''}{$kar.naziv|default:''}{/if}
+                                </div>
+
+                                {* Card image — always read-only *}
+                                {if $kar.karta && $kar.karta != ''}
+                                    <div class="kosmicka-card-img-wrap">
+                                        <img src="/img/konstelacija/{$kar.karta}.jpg"
+                                             alt="{$kar.naziv|default:''|escape:'html'}"
+                                             class="kosmicka-card-img clickable-kosmicka"
+                                             data-img="/img/konstelacija/{$kar.karta}.jpg"
+                                             data-naziv="{$kar.naziv|default:''|escape:'html'}" />
+                                        <span class="kosmicka-num kosmicka-num-drawn">-{$cGlobal+1}</span>
+                                    </div>
+                                {else}
+                                    {* Not drawn — closed card *}
+                                    <div class="kosmicka-card-img-wrap">
+                                        <img src="/img/konstelacija/0.jpg"
+                                             alt="Karta nije izvučena"
+                                             class="kosmicka-card-img" />
+                                        <span class="kosmicka-num kosmicka-num-center">-{$cGlobal+1}</span>
+                                    </div>
+                                {/if}
+
+                                {* Percentage below card *}
+                                {assign var="kpHasVal" value=($kar.procenat !== null && $kar.procenat !== '') || ($kar.je_proslo && !$kar.karta)}
+                                <div class="kosmicka-card-procenat{if $kpHasVal} kp-has-val{/if}">
+                                    {if $kar.procenat !== null && $kar.procenat !== ''}
+                                        {$kar.procenat}%
+                                    {elseif $kar.je_proslo && !$kar.karta}
+                                        0%
+                                    {/if}
+                                </div>
+
+                            </div>{* .kosmicka-card-slot *}
+                            {/if}
+                        {/for}
+                    </div>{* .kosmicka-cards-row *}
+                    {/if}
+                {/for}
+                </div>{* .kosmicka-rows-col *}
+            </div>{* .kosmicka-planet-group *}
+            {/if}
+        {/for}
+
+    </div>{* .kosmicka-grid-wrapper *}
+
+    {if $kp.zavrseno}
+    <div class="kosmicka-summary">
+        Snaga Karmičke Vertikale za uverenje "{$kp.ukupan_broj}." prethodnog života je {$kp.ukupni_prosek}%
+    </div>
+    {/if}
+
+</div>
+
+{/if}
+
+================================================================================
+CSS (dodati u glavni CSS fajl projekta)
+================================================================================
+
+/* ===== KOSMICKA PORUKA — READ-ONLY COACH VIEW ===== */
+.kosmicka-poruka-content {
+    width: 100%;
+    box-sizing: border-box;
+}
+.kosmicka-grid-wrapper {
+    position: relative;
+}
+.kosmicka-planet-group {
+    display: flex;
+    align-items: stretch;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #ce9a59;
+}
+.kosmicka-planet-group + .kosmicka-planet-group {
+    padding-top: 18px;
+}
+.kosmicka-planet-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.kosmicka-planet-symbol {
+    font-size: 88px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    color: #8b6914;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+.kosmicka-rows-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.kosmicka-cards-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+}
+.kosmicka-row-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    width: 52px;
+    flex-shrink: 0;
+    text-align: center;
+}
+.kosmicka-spirala {
+    width: 36px;
+    height: auto;
+}
+.kosmicka-row-num {
+    font-weight: bold;
+    font-size: 15px;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+.kosmicka-row-avg {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ce9a59;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    min-height: 18px;
+}
+.kosmicka-card-slot {
+    flex: 0 0 calc((100% - 52px - 6 * 4px) / 6);
+    max-width: calc((100% - 52px - 6 * 4px) / 6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+.kosmicka-card-slot.kosmicka-red-border .kosmicka-card-img-wrap {
+    border: 2px solid #cc0000;
+    border-radius: 4px;
+}
+.kosmicka-card-date {
+    font-size: 11px;
+    text-align: center;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    position: relative;
+    z-index: 3;
+}
+.kosmicka-card-name {
+    font-size: 11px;
+    text-align: center;
+    color: #ce9a59;
+    min-height: 14px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    position: relative;
+    z-index: 3;
+}
+.kosmicka-card-img-wrap {
+    width: 100%;
+    position: relative;
+}
+.kosmicka-card-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 3px;
+}
+.clickable-kosmicka {
+    cursor: pointer;
+}
+.kosmicka-num {
+    position: absolute;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0,0,0,0.55);
+    border-radius: 4px;
+    padding: 1px 4px;
+    line-height: 1.4;
+    pointer-events: none;
+    z-index: 3;
+}
+.kosmicka-num-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.kosmicka-num-drawn {
+    top: 3px;
+    right: 3px;
+}
+.kosmicka-card-procenat {
+    font-size: 13px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 16px;
+    margin-top: 3px;
+    border-radius: 3px;
+    padding: 1px 4px;
+    position: relative;
+    z-index: 3;
+}
+.kosmicka-card-procenat.kp-has-val {
+    background: #ce9a59;
+    color: #fff;
+}
+.kosmicka-summary {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: #fffbe6;
+    border-left: 4px solid #ffd700;
+    font-size: 13px;
+    color: #5a4200;
+}
+.kosmicka-naslov {
+    margin: 0 0 14px 0;
+    font-size: 24px;
+    color: #ce9a59;
+    font-weight: bold;
+    text-align: center;
+}
+/* Vertical golden line elements (drawn by JS) */
+.kosmicka-vertikala-line {
+    pointer-events: none;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .kosmicka-poruka-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .kosmicka-grid-wrapper {
+        min-width: 860px;
+    }
+    .kosmicka-planet-symbol {
+        font-size: 52px;
+        padding: 0 6px;
+    }
+    .kosmicka-row-label {
+        width: 48px;
+    }
+    .kosmicka-spirala {
+        width: 32px;
+    }
+    .kosmicka-row-num { font-size: 14px; }
+    .kosmicka-row-avg { font-size: 13px; }
+    .kosmicka-card-slot {
+        flex: 0 0 calc((100% - 48px - 6 * 4px) / 6);
+        max-width: calc((100% - 48px - 6 * 4px) / 6);
+    }
+    .kosmicka-card-date,
+    .kosmicka-card-name,
+    .kosmicka-num,
+    .kosmicka-card-procenat { font-size: 11px; }
+}
+
+================================================================================
+JAVASCRIPT (dodati u glavni JS fajl — jQuery mora biti učitan)
+================================================================================
+
+// ===== KOSMICKA PORUKA — Karmička Vertikala zlatna linija =====
+$(function() {
+    $('.kosmicka-poruka-content').each(function() {
+        renderKarmickaVertikala($(this));
+    });
+});
+
+// Klik na izvučenu kartu — uvećani prikaz
+$(document).on('click', '.clickable-kosmicka', function() {
+    var imgSrc = $(this).data('img') || $(this).attr('src');
+    var naziv  = $(this).data('naziv') || '';
+    if (!$('#kosmicka-img-modal').length) {
+        $('body').append('<div id="kosmicka-img-modal" style="display:none;"><img id="kosmicka-img-modal-img" src="" alt="" style="max-width:100%;max-height:80vh;" /></div>');
+    }
+    $('#kosmicka-img-modal-img').attr('src', imgSrc).attr('alt', naziv);
+    $('#kosmicka-img-modal').dialog({
+        modal: true,
+        width: 'auto',
+        title: naziv,
+        buttons: { 'Zatvori': function() { $(this).dialog('close'); } }
+    });
+});
+
+// Zlatna vertikalna linija — po jedan segment po završenom redu
+// Širina segmenta = prosek_reda / 100 * 25px, centrirana na kolonu poslednje karte
+function renderKarmickaVertikala($content) {
+    var $grid  = $content.find('.kosmicka-grid-wrapper');
+    var kolona = parseInt($grid.data('kolona'));
+
+    $content.find('.kosmicka-vertikala-line').remove();
+    $grid.css('position', 'relative');
+
+    if (isNaN(kolona)) return;
+
+    var $rows = $content.find('.kosmicka-cards-row');
+    if ($rows.length === 0) return;
+
+    var gridOffset = $grid.offset();
+    var segments   = [];
+
+    $rows.each(function() {
+        var $row    = $(this);
+        var avgText = $row.find('.kosmicka-row-avg').text().replace('%', '').trim();
+        var avg     = parseFloat(avgText);
+        if (isNaN(avg)) return;
+
+        var $slot    = $row.find('.kosmicka-card-slot').eq(kolona);
+        if (!$slot.length) return;
+
+        var $imgWrap = $slot.find('.kosmicka-card-img-wrap');
+        var $target  = $imgWrap.length ? $imgWrap : $slot;
+        var off      = $target.offset();
+        var centerX  = $slot.offset().left - gridOffset.left + $slot.outerWidth() / 2;
+
+        segments.push({
+            top:     off.top - gridOffset.top,
+            height:  $target.outerHeight(),
+            bottom:  off.top - gridOffset.top + $target.outerHeight(),
+            centerX: centerX,
+            avg:     avg
+        });
+    });
+
+    if (!segments.length) return;
+
+    var totalRows   = Math.ceil(parseInt($grid.data('ukupan-broj')) / 6);
+    var allComplete = (segments.length === totalRows);
+
+    for (var i = 0; i < segments.length; i++) {
+        var seg       = segments[i];
+        var lineWidth = Math.max(1, seg.avg / 100 * 25);
+        var height    = (i < segments.length - 1)
+            ? (segments[i + 1].top - seg.top)
+            : seg.height;
+
+        $('<div class="kosmicka-vertikala-line"></div>').css({
+            position:      'absolute',
+            top:           seg.top + 'px',
+            left:          (seg.centerX - lineWidth / 2) + 'px',
+            width:         lineWidth + 'px',
+            height:        height + 'px',
+            background:    'linear-gradient(to bottom, #ffd700, #b8860b)',
+            borderRadius:  (lineWidth / 2) + 'px',
+            pointerEvents: 'none',
+            zIndex:        2,
+        }).appendTo($grid);
+    }
+
+    // Tačka na kraju — samo kada su svi redovi završeni
+    if (!allComplete) return;
+    var last      = segments[segments.length - 1];
+    var lineWidth = Math.max(1, last.avg / 100 * 25);
+    var dotSize   = Math.max(4, lineWidth * 2);
+
+    $('<div class="kosmicka-vertikala-line kosmicka-vertikala-dot"></div>').css({
+        position:      'absolute',
+        top:           (last.bottom - dotSize / 2) + 'px',
+        left:          (last.centerX - dotSize / 2) + 'px',
+        width:         dotSize + 'px',
+        height:        dotSize + 'px',
+        background:    '#ffd700',
+        borderRadius:  '50%',
+        pointerEvents: 'none',
+        zIndex:        3,
+    }).appendTo($grid);
+}
+
+================================================================================
+NAPOMENE ZA AI KOJI IMPLEMENTIRA
+================================================================================
+
+1. Tabela se zove "karte_kontalacije" (NE karte_konstelacije) — jedno 's' nedostaje
+2. $db->escape() ne postoji — datumi se čuvaju kao DATE i validiraju regex-om
+3. Template koristi Smarty 3 sintaksu ({for}, {assign}, {foreach})
+4. jQuery UI mora biti učitan (za .dialog())
+5. Nema AJAX fajlova — ovo je čisto read-only prikaz
+6. Prikaz se uklapa u postojeći switch/case sistem za module
+7. moduleVarMap entry 'Kosmicka-poruka' => 'modulKosmickaPoruka' mora biti dodat
+8. Karte su grupisane: 4 grupe × 4 reda × 6 karata = max 96 slotova (stvarni broj je manji)
+9. Zlatna linija prolazi kroz kolonu poslednje karte: kolona = (ukupan_broj % 6 === 0) ? 5 : (ukupan_broj % 6) - 1
+10. Red je "završen" kada sve karte imaju procenat ILI su u prošlosti (prošle neocenjene = 0%)
+
+================================================================================

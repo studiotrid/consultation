@@ -1,0 +1,72 @@
+1	Abundantia	jpg
+10	Suadela	jpg
+11	Venera	jpg
+12	Rearea	jpg
+13	Ira	jpg
+14	Anisa Pie	jpg
+15	Laksmi	jpg
+16	Asvajudjaju	jpg
+17	Benzajten	jpg
+18	Kisoten	jpg
+19	Renenutet	jpg
+2	Africa	jpg
+20	Tiha	jpg
+21	Bridzit	jpg
+22	Izis	jpg
+23	Talija	jpg
+24	Euticia	jpg
+25	Hator	jpg
+26	Ataksak	jpg
+27	Devi ratih	jpg
+28	Santosi mata	jpg
+29	Parvati	jpg
+3	Felicitas	jpg
+30	Sarasvati	jpg
+31	Radha	jpg
+32	Adji	jpg
+33	Afrodita	jpg
+34	Hera	jpg
+35	Djambala	jpg
+36	Anuket	jpg
+37	Hambodia	jpg
+38	Inari	jpg
+39	Eufrosina	jpg
+4	Feroni	jpg
+40	Aglaja	jpg
+41	Aeda	jpg
+42	Amfitrita	jpg
+43	Egla	jpg
+44	Freja	jpg
+45	Gersemi	jpg
+46	Gulveig	jpg
+47	Hnos	jpg
+48	Vjor	jpg
+49	Sjofn	jpg
+5	Fides	jpg
+50	Sif	jpg
+51	Lofn	jpg
+52	Frig	jpg
+53	Laka	jpg
+54	Anahita	jpg
+55	Kupala	jpg
+56	Jang asa	jpg
+57	Indrani	jpg
+58	Inana	jpg
+59	Prende	jpg
+6	Fortuna	jpg
+60	Kliodna	jpg
+61	Heba	jpg
+62	Lada	jpg
+63	Hedona	jpg
+64	Voluptas	jpg
+65	Bastet	jpg
+66	Osun	jpg
+67	Vangmu niangniang	jpg
+68	Ame no uzume	jpg
+69	Kokomama	jpg
+7	Juno	jpg	
+70	Samkhat	jpg
+71	Suklang malajon	jpg
+72	Sokiketcal	jpg
+8	Leticija	jpg
+9	Pomona	jpg

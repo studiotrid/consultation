@@ -5,7 +5,7 @@
     require_once 'inc/conf/env.php';	# Environment vars
     $_SESSION['language'] = DEFAULT_LANG;
 
-    // Uèitaj Composer autoloader
+    // Uï¿½itaj Composer autoloader
     require_once __DIR__ . '/vendor/autoload.php';
     
     $smarty = new Smarty();
@@ -22,6 +22,19 @@
     require_once (WEBROOT.BASEPATH.'inc/class/konsultacije.class.php');   # Languages
      
     $login = Login::getInstance();
+
+    if (isset($_GET['login_hash']) && !$login->isLoggedIn()) {
+        $hashLoginError = null;
+        $hashLoginOk = $login->checkLoginHash($_GET['login_hash'], $hashLoginError);
+
+        if ($hashLoginOk) {
+            header('Location: index.php');
+            exit;
+        }
+
+        $smarty->assign('status', 'error');
+        $smarty->assign('message', _('Link je istekao ili nije vazeci.'));
+    }
     
     if(isset($_POST['username'])){
 

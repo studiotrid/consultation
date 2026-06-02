@@ -1,0 +1,27 @@
+{
+  "name": "Professional Astrology Coach",
+  "short_name": "Consultation Portal",
+  "description": "Astrology coaching and consultation platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#977141",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "img/consultation-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "img/consultation-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "education"],
+  "permissions": ["notifications"]
+
+}

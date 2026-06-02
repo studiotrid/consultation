@@ -1,5 +1,10 @@
 /* Have fun adding your style here :) - PS: At all times this file should contain a comment or a rule, otherwise opera might act buggy :( */
 
+/* jQuery UI Dialog Override */
+.ui-dialog .ui-dialog-content {
+    padding: 0 !important;
+}
+
 /* General Custom CSS */
 :root{
       --box-bg: rgba(15,36,65,0.75); /* #0f2441 at 75% opacity */
@@ -15,6 +20,7 @@
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
       color:#e2c197;
+      overflow-x: hidden;
     }
 
     /* Full-screen background image */
@@ -187,6 +193,15 @@
         position:relative;
         top:-15px;
     }
+    .user-home-link {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .user-home-link:hover,
+    .user-home-link:focus {
+      color: #ffffff;
+      text-decoration: none;
+    }
     .senka{
         filter: drop-shadow(0px 17px 16px #170850);
     }
@@ -243,10 +258,19 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
       align-items: center; 
       gap: 10px; 
       padding:30px;
+      max-width: 100%;
+      overflow-x: hidden !important;
+      box-sizing: border-box;
+    }
+    
+    .ui-accordion-content-active{
+        overflow-x: hidden !important;
+        max-width: 100%;
     }
     .modulHolder h3{
         font-size:21px;
         margin: 30px auto;
+        width:100%;
     }
     .napomena{
         min-width: 100%;
@@ -283,6 +307,11 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
         position:relative;
         padding-bottom:30px;
         margin-bottom:20px;
+        transition: background-color 0.3s ease;
+    }
+    .ikona.active{
+        background-color: rgba(15, 36, 65, 0.6);
+        border-radius: 12px;
     }
     .ikona span{
         position:absolute;
@@ -290,23 +319,124 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
         left:0;
         width:100%;
     }
+    .ikona img{
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
     .audioModul{
         background:url('/img/audio.png') no-repeat top center;
     }
     
-    .cartModul{
+    .videoModul{
+        background:url('/img/video.png') no-repeat center center;
+        
+    }
+    
+    .videoModulEA{
+        background:url('/img/vezbe.png') no-repeat center center;
+        background-size:90% ;
+    }
+    
+    .videoModulMT{
+        background:url('/img/videoMT.png') no-repeat center center;
+        background-size:90% ;
+    }
+    
+    .vodjeneModul{
+        background:url('/img/vodjene.png') no-repeat  center 20px;
+        
+        background-size:90% ;
+    }
+    
+    .frekvencijaModul{
+        background:url('/img/frekvencija.png') no-repeat center center;
+            
+    }
+    
+    .afirmacijaModul{
+        background:url('/img/afirmacija.png') no-repeat center center;
+        background-size:80% ;
+        
+    }
+    
+    .cartModul,.venera_chartModul {
         background:url('/img/cart.png') no-repeat top center;
         background-size:100% ;
     }
+
     
     .testModul{
         background:url('/img/test.png') no-repeat top center;
         background-size:100% ;
     }
     
+    .questionnaireModul{
+      background:url('/img/questionnaire.png') no-repeat top center;
+      background-size:100% ;
+    }
+
+    /* Questionnaire modal styling overrides */
+    .ui-dialog .ui-dialog-content.questionnaire-dialog{
+      background:#fff !important;
+      color:#222;
+      padding:20px;
+      border-radius:12px;
+    }
+    .ui-dialog .ui-dialog-titlebar{
+      background:#f5f5f5;
+      border:none;
+      color:#222;
+      border-radius:12px 12px 0 0;
+    }
+    .questionnaire-form label{
+      display:block;
+      font-weight:600;
+      color:#333;
+      margin-bottom:14px;
+    }
+    .questionnaire-form textarea{
+      width:100%;
+      min-height:110px;
+      margin-top:8px;
+      border:1px solid #d0d0d0;
+      border-radius:8px;
+      padding:10px;
+      resize: vertical;
+    }
+    .questionnaire-form button{
+      margin-top:6px;
+    }
+    .questionnaire-feedback{
+      color:#b00020;
+      margin:6px 0 4px;
+      font-weight:600;
+    }
+
     .testModultest{
         background:url('/img/testTest.png') no-repeat top center;
         background-size:100% ;
+    }
+    
+    .tsTestModul{
+        background:url('/img/test.png') no-repeat top center;
+        background-size:100% ;
+    }
+    
+    .tsTestResults{
+        background:url('/img/testTest.png') no-repeat top center;
+        background-size:100% ;
+    }
+    
+    .meridijanTestModul{
+        /* No background - uses img tag instead */
+        background: none;
+    }
+    
+    .meridijanTestModulResults{
+        /* No background - uses img tag instead */
+        background: none;
     }
     
     .ui-widget-content{
@@ -314,6 +444,70 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
      border:none !important;   
      color:#e2c197 !important;
     }
+    .aktiviranje-dialog .ui-widget-content,
+    .aktiviranje-dialog .ui-dialog-content{
+     background:#ffffff !important;
+     color:#333333 !important;
+     border:1px solid #ddd !important;
+     padding: 0 !important;
+    }
+    .aktiviranje-dialog .aktiviranje-inner{
+     background:#ffffff !important;
+     color:#333333 !important;
+    }
+    
+    .meridijan-dialog .ui-widget-content,
+    .meridijan-dialog .ui-dialog-content{
+     background:#ffffff !important;
+     color:#333333 !important;
+     border:1px solid #ddd !important;
+     padding: 0 !important;
+     overflow: hidden !important;
+    }
+    .meridijan-dialog .ui-dialog-content .ui-widget-content{
+     background:#ffffff !important;
+     color:#333333 !important;
+    }
+    .meridijan-dialog {
+     background:#ffffff !important;
+    }
+    .ui-dialog.meridijan-dialog {
+      background:#ffffff !important;
+      overflow: hidden !important;
+    }
+    .ui-dialog.meridijan-dialog .ui-widget-content,
+    .ui-dialog.meridijan-dialog .ui-dialog-content{
+     background:#ffffff !important;
+     color:#333333 !important;
+    }
+    .meridijan-dialog .ui-dialog-titlebar{
+     background: #f5f5f5 !important;
+     border: 1px solid #ddd !important;
+     color: #333333 !important;
+    }
+    
+    /* TS Test Dialog */
+    .ts-test-dialog .ui-widget-content,
+    .ts-test-dialog .ui-dialog-content{
+     background:#ffffff !important;
+     color:#333333 !important;
+     border:1px solid #ddd !important;
+     padding: 0 !important;
+     overflow: hidden !important;
+    }
+    .ts-test-dialog {
+     background:#ffffff !important;
+    }
+    .ui-dialog.ts-test-dialog {
+      background:#ffffff !important;
+      overflow: hidden !important;
+    }
+    .ts-test-dialog .ui-dialog-titlebar{
+     background: #f5f5f5 !important;
+     border: 1px solid #ddd !important;
+     color: #333333 !important;
+    }
+    
     .ui-accordion .ui-accordion-content{
         width:100% !important;
         padding: 0 !important;
@@ -329,10 +523,11 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
     .dn{
       display:none;
     }
-    .testGrafikoni{
+    .testGrafikoni,.afirmacijaPrikaz,.videoPrikaz,.vodjenePrikaz,.venera_chartPrikaz,.audioPrikaz,.frekvencijaPrikaz,.cartPrikaz,.ritualiPrikaz,.meditacijaPrikaz{
       width: 100%;
       -ms-flex-order: last; /* IE 10 */
       order: last;
+      padding: 50px 0;
     }
 
     .radiocheck{
@@ -388,6 +583,182 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
       font-family:astroregular;
       font-size:30px;
   }
+  .levos{
+            height: fit-content;
+  }
+
+/* Card Modal Styles */
+.card-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 2147483647 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-modal-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    cursor: pointer;
+    z-index: 2147483646 !important;
+}
+
+.card-modal-content {
+    position: relative !important;
+    max-width: 90%;
+    max-height: 90%;
+    z-index: 2147483647 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s;
+}
+
+.card-modal-close:hover {
+    color: #ccc;
+}
+
+.card-modal-image {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.card-modal-date {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Cards Content Styles */
+.cards-content {
+    width: 100%;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.today-experience-section {
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.experience-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.today-experience {
+    width: 100%;
+    font-size: 15px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cards-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.card-item {
+    flex: 1;
+    max-width: calc(25% - 12px);
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.card-image-wrapper {
+    width: 100%;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-image.unopened {
+    opacity: 0.6;
+}
+
+.card-image.clickable-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.card-image.clickable-card:hover {
+    transform: scale(1.05);
+}
+
+.card-date {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.save-experience-btn {
+    width: 100%;
+    padding: 20px;
+    color: white;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.save-experience-btn:disabled {
+    cursor: not-allowed;
+}
+
 /*
 Desktop Styles
 ================================================== */
@@ -407,9 +778,107 @@ Mobile Styles
 
 @media only screen and (max-width: 767px) {
   /* Add your Mobile Styles here */
+  .cards-content{
+    padding:0; 
+  }
+  .today-experience-section {
+    padding:0;
+  }
+  .cards-row {
+    flex-wrap: wrap;
+  }
+  
+  .card-item {
+    max-width: calc(50% - 8px);
+  }
+  
+  .card-modal-image {
+    max-height: 70vh;
+  }
+  
+  .card-modal-close {
+    font-size: 30px;
+    top: -35px;
+  }
+  
+  .experience-title {
+    font-size: 16px;
+  }
+  
+  .modulHolder{
+    padding:10px;
+  }
     .levo{
         max-width:100%;
         width:100%;
         float:none;
         }
+}
+
+/* Notification Settings Icon */
+.notification-settings {
+    display: inline-flex;
+  position: relative;
+  top: -12px;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    border-radius: 50%;
+    background-color: rgba(152, 113, 65, 0.1);
+    border: 2px solid rgba(152, 113, 65, 0.3);
+    color: #d49d55;
+    font-size: 18px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.notification-settings:hover {
+    background-color: rgba(152, 113, 65, 0.2);
+    border-color: rgba(152, 113, 65, 0.6);
+    color: #fac883;
+    transform: scale(1.05);
+}
+
+.notification-settings:active {
+    transform: scale(0.95);
+}
+
+.notification-settings i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Notification status indicator */
+.notification-settings[data-status="enabled"] {
+    box-shadow: 0 0 8px rgba(152, 113, 65, 0.5);
+    animation: bell-pulse 2s infinite;
+}
+
+.notification-settings[data-status="disabled"] {
+    opacity: 0.6;
+}
+
+@keyframes bell-pulse {
+    0% {
+        box-shadow: 0 0 8px rgba(152, 113, 65, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(152, 113, 65, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 8px rgba(152, 113, 65, 0.5);
+    }
+}
+
+/* Responsive notification icon */
+@media (max-width: 768px) {
+    .notification-settings {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+        margin-right: 10px;
+    }
 }

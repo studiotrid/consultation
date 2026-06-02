@@ -107,7 +107,10 @@ class Database {
 	# Param: string
 	# returns: string
 	public function escape($string){
-		if(get_magic_quotes_runtime()) $string = stripslashes($string);
+		// get_magic_quotes_runtime is removed in PHP 8+, so guard the call
+		if(function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime()) {
+			$string = stripslashes($string);
+		}
 		return @mysqli_real_escape_string($this->link_id, $string);
 	}#-#escape()
 
