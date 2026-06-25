@@ -191,6 +191,9 @@ class Konsultacije
                         'modulandjeo',
                         'modulandjeo_faza2_veza',
                         'modulkarmicko_uverenje_zivot',
+                        'modulprecnik_svesti',
+                        'modulveza_izmedju_cakri',
+                        'modulchart_viseg_ja',
                         'modultermini',
                         'modulaktiviranje',
                         'modulaktiviranje_karmicke_vertikale'
@@ -323,6 +326,25 @@ class Konsultacije
                             $tip['template'] = 'andjeo_faza2_veza.tpl';
                         }
 
+                        // Precnik svesti (ID: 106)
+                        if($modul['modul'] == 106){
+                            $tip['type'] = 'precnik_svesti';
+                            $tip['template'] = 'precnik_svesti.tpl';
+                        }
+
+                        // Veza izmedju cakri (ID: 107)
+                        // Hidden on client side because module 106 already contains this image.
+                        if($modul['modul'] == 107){
+                            $shouldRenderModule = false;
+                            $skipSwitch = true;
+                        }
+
+                        // Chart viseg ja (ID: 108)
+                        if($modul['modul'] == 108){
+                            $tip['type'] = 'chart_viseg_ja';
+                            $tip['template'] = 'chart_viseg_ja.tpl';
+                        }
+
                         if(!$skipSwitch){
                         switch($tip['type']){
                             case 'cart':
@@ -427,13 +449,33 @@ class Konsultacije
                                 }
 
                                 $kpStart     = $konsult['kosmicka_pocinje_od_datuma'];
-                                $kpBrojDana  = intval($konsult['kosmicka_ukupan_broj_dana']);
+                                $kpUkupanBrojDana = intval($konsult['kosmicka_ukupan_broj_dana']);
+                                $kpPhase5    = ($kpFaza === 5);
+                                $kpBrojDana  = $kpUkupanBrojDana;
                                 $kpDigitalno = intval($konsult['kosmicka_digitalno_izvlacenje']);
                                 $kpBottomUp  = ($kpFaza === 3) ? 1 : 0;
                                 $kpIsFaza2   = ($kpFaza === 2 || $kpFaza === 4);
                                 $kpImgBase   = $kpIsFaza2 ? '/img/boginje' : '/img/konstelacija';
                                 $kpBackImg   = $kpImgBase . '/0.jpg';
-                                $kpKeyBeliefId = $kpIsFaza2 ? intval($konsult['senka_svrha_zivotinja_id']) : 0;
+                                $kpKeyBeliefId = 0;
+                                $kpKeyBeliefCandidates = array();
+                                if ($kpIsFaza2) {
+                                    if ($kpFaza === 4) {
+                                        $kpKeyBeliefCandidates[] = isset($konsult['senka_esvrha_zivotinja_id'])
+                                            ? intval($konsult['senka_esvrha_zivotinja_id']) : 0;
+                                        $kpKeyBeliefCandidates[] = isset($konsult['senka_svrha_zivotinja_id'])
+                                            ? intval($konsult['senka_svrha_zivotinja_id']) : 0;
+                                    } else {
+                                        $kpKeyBeliefCandidates[] = isset($konsult['senka_svrha_zivotinja_id'])
+                                            ? intval($konsult['senka_svrha_zivotinja_id']) : 0;
+                                        $kpKeyBeliefCandidates[] = isset($konsult['senka_energija_zivotinja_id'])
+                                            ? intval($konsult['senka_energija_zivotinja_id']) : 0;
+                                    }
+                                    // Keep unique positive candidates only.
+                                    $kpKeyBeliefCandidates = array_values(array_unique(array_filter($kpKeyBeliefCandidates, function($v){
+                                        return intval($v) > 0;
+                                    })));
+                                }
 
                                 $kpLastValid = date('Y-m-d', strtotime($kpStart . ' +' . ($kpBrojDana - 1) . ' day'));
 
@@ -443,38 +485,42 @@ class Konsultacije
                                     "AND datum > '" . $kpLastValid . "' AND karta IS NULL"
                                 );
 
-                                $kpExist = $this->db->query_first(
-                                    "SELECT COUNT(*) AS cnt FROM izvucene_karte WHERE konsultacija='" . $konsult['id'] . "'"
-                                );
-                                if (!$kpExist || intval($kpExist['cnt']) < $kpBrojDana) {
-                                    // Fetch already-existing dates to avoid duplicates
+                                if ($kpPhase5) {
                                     $kpExistingRows = $this->db->fetch_array(
-                                        "SELECT datum FROM izvucene_karte WHERE konsultacija='" . $konsult['id'] . "'"
+                                        "SELECT datum, COUNT(*) AS cnt FROM izvucene_karte WHERE konsultacija='" . $konsult['id'] . "' GROUP BY datum"
                                     );
-                                    $kpExistingSet = array();
+                                    $kpExistingMap = array();
                                     if (is_array($kpExistingRows)) {
                                         foreach ($kpExistingRows as $kpEr) {
-                                            $kpExistingSet[] = $kpEr['datum'];
+                                            $kpExistingMap[$kpEr['datum']] = intval($kpEr['cnt']);
                                         }
                                     }
                                     for ($kpD = 0; $kpD < $kpBrojDana; $kpD++) {
                                         $kpDatum = date('Y-m-d', strtotime($kpStart . ' +' . $kpD . ' day'));
-                                        if (!in_array($kpDatum, $kpExistingSet)) {
+                                        $kpExistingCount = isset($kpExistingMap[$kpDatum]) ? intval($kpExistingMap[$kpDatum]) : 0;
+                                        for ($kpSlot = $kpExistingCount; $kpSlot < 2; $kpSlot++) {
                                             $this->db->query(
                                                 "INSERT INTO izvucene_karte (konsultacija, datum) " .
                                                 "VALUES ('" . $konsult['id'] . "', '" . $kpDatum . "')"
                                             );
                                         }
                                     }
-                                }
 
-                                if ($kpIsFaza2) {
+                                    $kpKarte = $this->db->fetch_array(
+                                        "SELECT ik.*, kk.naziv AS konstelacija_naziv, kb.naziv AS boginja_naziv " .
+                                        "FROM izvucene_karte ik " .
+                                        "LEFT JOIN karte_kontalacije kk ON kk.id = ik.karta " .
+                                        "LEFT JOIN karte_boginje kb ON kb.id = ik.karta " .
+                                        "WHERE ik.konsultacija='" . $konsult['id'] . "' " .
+                                        "ORDER BY ik.datum ASC, ik.id ASC"
+                                    );
+                                } elseif ($kpIsFaza2) {
                                     $kpKarte = $this->db->fetch_array(
                                         "SELECT ik.*, kb.naziv AS naziv " .
                                         "FROM izvucene_karte ik " .
                                         "LEFT JOIN karte_boginje kb ON kb.id = ik.karta " .
                                         "WHERE ik.konsultacija='" . $konsult['id'] . "' " .
-                                        "ORDER BY ik.datum ASC"
+                                        "ORDER BY ik.datum ASC, ik.id ASC"
                                     );
                                 } else {
                                     $kpKarte = $this->db->fetch_array(
@@ -482,7 +528,7 @@ class Konsultacije
                                         "FROM izvucene_karte ik " .
                                         "LEFT JOIN karte_kontalacije kk ON kk.id = ik.karta " .
                                         "WHERE ik.konsultacija='" . $konsult['id'] . "' " .
-                                        "ORDER BY ik.datum ASC"
+                                        "ORDER BY ik.datum ASC, ik.id ASC"
                                     );
                                 }
 
@@ -501,6 +547,26 @@ class Konsultacije
                                     }
                                 }
 
+                                if ($kpIsFaza2 && count($kpKeyBeliefCandidates) > 0) {
+                                    $kpDrawnSet = array();
+                                    foreach ($kpKarte as $kpKar) {
+                                        if (isset($kpKar['karta']) && $kpKar['karta'] !== null && $kpKar['karta'] !== '') {
+                                            $kpDrawnSet[] = intval($kpKar['karta']);
+                                        }
+                                    }
+                                    // Prefer candidate that already exists in drawn cards.
+                                    foreach ($kpKeyBeliefCandidates as $kpCandidate) {
+                                        if (in_array($kpCandidate, $kpDrawnSet, true)) {
+                                            $kpKeyBeliefId = $kpCandidate;
+                                            break;
+                                        }
+                                    }
+                                    // Fallback: first configured candidate.
+                                    if ($kpKeyBeliefId <= 0) {
+                                        $kpKeyBeliefId = intval($kpKeyBeliefCandidates[0]);
+                                    }
+                                }
+
                                 $kpToday = date('Y-m-d');
                                 foreach ($kpKarte as $kpK => $kpKar) {
                                     $kpKarte[$kpK]['crveni_okvir'] = in_array($kpKar['datum'], $kpVertSet) ? 1 : 0;
@@ -512,6 +578,77 @@ class Konsultacije
                                     $kpKarte[$kpK]['datum_prikaz'] = date('d.m.Y', strtotime($kpKar['datum']));
                                     $kpKarte[$kpK]['je_danas']     = ($kpKar['datum'] === $kpToday) ? 1 : 0;
                                     $kpKarte[$kpK]['je_proslo']    = ($kpKar['datum'] < $kpToday) ? 1 : 0;
+                                }
+
+                                $kpFaza5Dani = array();
+                                if ($kpPhase5) {
+                                    $kpTrenutniDatum = '';
+                                    $kpTrenutniDan = array();
+                                    $kpDanBroj = 0;
+                                    foreach ($kpKarte as $kpKar) {
+                                        $kpDatum = isset($kpKar['datum']) ? $kpKar['datum'] : '';
+                                        if ($kpDatum === '') {
+                                            continue;
+                                        }
+                                        if ($kpDatum !== $kpTrenutniDatum) {
+                                            if (!empty($kpTrenutniDan)) {
+                                                $kpFaza5Dani[] = $kpTrenutniDan;
+                                            }
+                                            $kpDanBroj++;
+                                            $kpTrenutniDatum = $kpDatum;
+                                            $kpTrenutniDan = array(
+                                                'datum' => $kpDatum,
+                                                'datum_prikaz' => date('d.m.Y', strtotime($kpDatum)),
+                                                'dan_broj' => $kpDanBroj,
+                                                'top' => null,
+                                                'bottom' => null
+                                            );
+                                        }
+                                        if ($kpTrenutniDan['top'] === null) {
+                                            $kpTrenutniDan['top'] = $kpKar;
+                                        } elseif ($kpTrenutniDan['bottom'] === null) {
+                                            $kpTrenutniDan['bottom'] = $kpKar;
+                                        }
+                                    }
+                                    if (!empty($kpTrenutniDan)) {
+                                        $kpFaza5Dani[] = $kpTrenutniDan;
+                                    }
+
+                                    foreach ($kpFaza5Dani as $kpDanIdx => $kpDan) {
+                                        foreach (array('top', 'bottom') as $kpSlotName) {
+                                            if (!isset($kpFaza5Dani[$kpDanIdx][$kpSlotName]) || !is_array($kpFaza5Dani[$kpDanIdx][$kpSlotName])) {
+                                                continue;
+                                            }
+
+                                            $kpSlot = $kpFaza5Dani[$kpDanIdx][$kpSlotName];
+                                            $kpIsTopSlot = ($kpSlotName === 'top');
+                                            $kpDeck = $kpIsTopSlot ? 'konstelacije' : 'boginje';
+                                            $kpBaseImg = $kpIsTopSlot ? '/img/konstelacija' : '/img/boginje';
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['deck'] = $kpDeck;
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['base_img'] = $kpBaseImg;
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['back_img'] = $kpBaseImg . '/0.jpg';
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['deck_sign'] = $kpIsTopSlot ? '+' : '-';
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['deck_name'] = $kpIsTopSlot ? '88 konstelacija' : 'Boginja';
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['display_number'] = $kpDan['dan_broj'];
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['datum_prikaz'] = $kpDan['datum_prikaz'];
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['row_id'] = isset($kpSlot['id']) ? intval($kpSlot['id']) : 0;
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['can_draw'] = (
+                                                isset($kpSlot['id']) &&
+                                                $kpSlot['datum'] === $kpToday &&
+                                                empty($kpSlot['karta'])
+                                            ) ? 1 : 0;
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['img_path'] = '';
+                                            if (isset($kpSlot['karta']) && $kpSlot['karta'] !== null && $kpSlot['karta'] !== '') {
+                                                $kpFaza5Dani[$kpDanIdx][$kpSlotName]['img_path'] = $kpBaseImg . '/' . intval($kpSlot['karta']) . '.jpg';
+                                            }
+                                            $kpFaza5Dani[$kpDanIdx][$kpSlotName]['naziv'] = '';
+                                            if ($kpIsTopSlot && isset($kpSlot['konstelacija_naziv'])) {
+                                                $kpFaza5Dani[$kpDanIdx][$kpSlotName]['naziv'] = $kpSlot['konstelacija_naziv'];
+                                            } elseif (!$kpIsTopSlot && isset($kpSlot['boginja_naziv'])) {
+                                                $kpFaza5Dani[$kpDanIdx][$kpSlotName]['naziv'] = $kpSlot['boginja_naziv'];
+                                            }
+                                        }
+                                    }
                                 }
 
                                 $kpBrojRedova = (int)ceil(count($kpKarte) / 6);
@@ -552,7 +689,15 @@ class Konsultacije
                                     && $kpLast['procenat'] !== null
                                     && $kpLast['procenat'] !== '') ? 1 : 0;
 
-                                if ($kpIsFaza2) {
+                                $kpKontalacije = array();
+                                if ($kpPhase5) {
+                                    $kpKontalacijeKonstelacije = $this->db->fetch_array(
+                                        "SELECT id, naziv FROM karte_kontalacije ORDER BY id ASC"
+                                    );
+                                    $kpKontalacijeBoginje = $this->db->fetch_array(
+                                        "SELECT id, naziv FROM karte_boginje WHERE id BETWEEN 1 AND 72 ORDER BY id ASC"
+                                    );
+                                } elseif ($kpIsFaza2) {
                                     $kpKontalacije = $this->db->fetch_array(
                                         "SELECT id, naziv FROM karte_boginje WHERE id BETWEEN 1 AND 72 ORDER BY id ASC"
                                     );
@@ -567,18 +712,23 @@ class Konsultacije
 
                                 $smarty->assign('modulKosmickaPoruka', array(
                                     'faza'          => $kpFaza,
+                                    'faza5'         => $kpPhase5 ? 1 : 0,
                                     'bottom_up'     => $kpBottomUp,
                                     'naslov'        => $kpNaslov,
                                     'konsultacija'  => $konsult['id'],
+                                    'broj_dana'     => $kpBrojDana,
                                     'digitalno'     => $kpDigitalno,
                                     'karte'         => $kpKarte,
+                                    'faza5_dani'    => $kpFaza5Dani,
                                     'red_proseci'   => $kpRedProseci,
                                     'ukupni_prosek' => $kpUkupniProsek,
                                     'kolona'        => $kpKolona,
-                                    'ukupan_broj'   => $kpBrojDana,
+                                    'ukupan_broj'   => $kpUkupanBrojDana,
                                     'zavrseno'      => $kpDone,
                                     'today'         => $kpToday,
-                                    'kontalacije'   => $kpKontalacije,
+                                    'kontalacije'   => isset($kpKontalacije) ? $kpKontalacije : array(),
+                                    'kontalacije_konstelacije' => isset($kpKontalacijeKonstelacije) ? $kpKontalacijeKonstelacije : array(),
+                                    'kontalacije_boginje' => isset($kpKontalacijeBoginje) ? $kpKontalacijeBoginje : array(),
                                     'img_base'      => $kpImgBase,
                                     'back_img'      => $kpBackImg,
                                     'key_belief_id' => $kpKeyBeliefId,
@@ -1391,8 +1541,15 @@ class Konsultacije
                                     break;
                                 }
 
-                                $zivotBroj = isset($konsult['senka_svrha_broj']) ? trim($konsult['senka_svrha_broj']) : '';
-                                $andjeoId = isset($konsult['senka_svrha_zivotinja_id']) ? intval($konsult['senka_svrha_zivotinja_id']) : 0;
+                                $zivotBroj = isset($konsult['senka_energija_broj']) ? trim($konsult['senka_energija_broj']) : '';
+                                $andjeoId = isset($konsult['senka_energija_zivotinja_id']) ? intval($konsult['senka_energija_zivotinja_id']) : 0;
+                                // Backward compatibility for older consultations where data was saved in svrha fields.
+                                if ($zivotBroj === '' && isset($konsult['senka_svrha_broj'])) {
+                                    $zivotBroj = trim($konsult['senka_svrha_broj']);
+                                }
+                                if ($andjeoId <= 0 && isset($konsult['senka_svrha_zivotinja_id'])) {
+                                    $andjeoId = intval($konsult['senka_svrha_zivotinja_id']);
+                                }
                                 if($zivotBroj === '' || $andjeoId <= 0){
                                     $shouldRenderModule = false;
                                     break;
@@ -1411,6 +1568,87 @@ class Konsultacije
                                     'broj' => $zivotBroj,
                                     'andjeo' => $andjeoIme,
                                     'title' => 'Kliknite za prikaz veze sa prethodnim životom'
+                                ));
+                            break;
+
+                            case 'precnik_svesti':
+                                $faza = isset($konsult['faza']) ? intval($konsult['faza']) : 0;
+                                if($faza !== 5){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $precnikRaw = isset($konsult['precnik_svesti_zivota']) ? trim((string)$konsult['precnik_svesti_zivota']) : '';
+                                $veza = isset($konsult['veza_izmedju_cakri']) ? trim((string)$konsult['veza_izmedju_cakri']) : '';
+                                $allowedVeze = array('1_7', '2_6', '3_5');
+
+                                if($precnikRaw === '' || !preg_match('/^\d+$/', $precnikRaw) || !in_array($veza, $allowedVeze, true)){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $precnik = intval($precnikRaw);
+                                if($precnik < 2 || $precnik > 144 || ($precnik % 2) !== 0){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $half = intval($precnik / 2);
+
+                                $smarty->assign('modulprecnik_svesti', array(
+                                    'precnik' => $precnik,
+                                    'half' => $half,
+                                    'veza' => $veza,
+                                    'title' => 'Prečnik Svesti od "'.$precnik.'" života',
+                                    'image' => '/img/'.$veza.'.png'
+                                ));
+                            break;
+
+                            case 'veza_izmedju_cakri':
+                                $faza = isset($konsult['faza']) ? intval($konsult['faza']) : 0;
+                                if($faza !== 5){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $veza = isset($konsult['veza_izmedju_cakri']) ? trim((string)$konsult['veza_izmedju_cakri']) : '';
+                                $vezaNaslovi = array(
+                                    '1_7' => 'Veza između 1. i 7. čakre',
+                                    '2_6' => 'Veza između 2. i 6. čakre',
+                                    '3_5' => 'Veza između 3. i 5. čakre'
+                                );
+
+                                if(!isset($vezaNaslovi[$veza])){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $smarty->assign('modulveza_izmedju_cakri', array(
+                                    'veza' => $veza,
+                                    'title' => $vezaNaslovi[$veza],
+                                    'image' => '/img/'.$veza.'.png'
+                                ));
+                            break;
+
+                            case 'chart_viseg_ja':
+                                $faza = isset($konsult['faza']) ? intval($konsult['faza']) : 0;
+                                if($faza !== 5){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $chartFileRaw = isset($konsult['viseg_ja_chart']) ? trim((string)$konsult['viseg_ja_chart']) : '';
+                                $chartFile = basename($chartFileRaw);
+                                if($chartFile === ''){
+                                    $shouldRenderModule = false;
+                                    break;
+                                }
+
+                                $chartUrl = 'https://coach.profesionalnaastrologija.com/upload/chart/' . rawurlencode($chartFile);
+                                $smarty->assign('modulchart_viseg_ja', array(
+                                    'title' => 'Chart Višeg Ja:',
+                                    'file' => $chartFile,
+                                    'image' => $chartUrl
                                 ));
                             break;
                             
@@ -1448,6 +1686,9 @@ class Konsultacije
                             'kamen' => 'modulkamen',
                             'andjeo' => 'modulandjeo',
                             'andjeo_faza2_veza' => 'modulandjeo_faza2_veza',
+                            'precnik_svesti' => 'modulprecnik_svesti',
+                            'veza_izmedju_cakri' => 'modulveza_izmedju_cakri',
+                            'chart_viseg_ja' => 'modulchart_viseg_ja',
                             'cards' => 'modulcards',
                             'materijal' => 'modulmaterijal',
                             'termini' => 'modultermini',

@@ -23,6 +23,9 @@ if (!isset($_SESSION['logged']) || !$_SESSION['logged']) {
 $konsultacija = isset($_POST['konsultacija']) ? intval($_POST['konsultacija']) : 0;
 $datum        = isset($_POST['datum'])        ? trim($_POST['datum'])          : '';
 $karta        = isset($_POST['karta'])        ? intval($_POST['karta'])        : 0;
+$rowId        = isset($_POST['row_id'])       ? intval($_POST['row_id'])       : 0;
+$deck         = isset($_POST['deck'])         ? trim($_POST['deck'])           : '';
+$slotPosition = isset($_POST['slot_position']) ? trim($_POST['slot_position']) : '';
 
 if (!$konsultacija || !$datum || !$karta) {
     http_response_code(400);
@@ -64,7 +67,63 @@ if (intval($konsult['user_id']) !== intval($_SESSION['logged'])) {
 
 $faza = isset($konsult['faza']) ? intval($konsult['faza']) : 0;
 $isFaza2 = ($faza === 2 || $faza === 4);
-$maxKartaId = $isFaza2 ? 72 : 88;
+$isFaza5 = ($faza === 5);
+
+if ($isFaza5) {
+    if (!$rowId) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Missing slot parameters']);
+        exit;
+    }
+}
+
+// Verify the row exists and karta is still NULL
+$row = $isFaza5
+    ? $db->query_first(
+        "SELECT id, datum FROM izvucene_karte " .
+        "WHERE id='" . $rowId . "' " .
+        "AND konsultacija='" . $konsultacija . "' " .
+        "AND karta IS NULL"
+    )
+    : $db->query_first(
+        "SELECT id FROM izvucene_karte " .
+        "WHERE konsultacija='" . $konsultacija . "' " .
+        "AND datum='" . $datum . "' " .
+        "AND karta IS NULL"
+    );
+
+if (!$row) {
+    echo json_encode(['success' => false, 'error' => 'Card already saved or slot not found']);
+    exit;
+}
+
+if ($isFaza5) {
+    $datum = isset($row['datum']) ? $row['datum'] : $datum;
+    $dayRows = $db->fetch_array(
+        "SELECT id FROM izvucene_karte " .
+        "WHERE konsultacija='" . $konsultacija . "' " .
+        "AND datum='" . $datum . "' " .
+        "ORDER BY id ASC LIMIT 2"
+    );
+    if (is_array($dayRows) && count($dayRows) >= 2) {
+        if (intval($dayRows[0]['id']) === intval($rowId)) {
+            $slotPosition = 'top';
+        } elseif (intval($dayRows[1]['id']) === intval($rowId)) {
+            $slotPosition = 'bottom';
+        }
+    }
+    if ($slotPosition === 'bottom') {
+        $deck = 'boginje';
+    } elseif ($slotPosition === 'top') {
+        $deck = 'konstelacije';
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid phase 5 slot']);
+        exit;
+    }
+}
+
+$maxKartaId = $isFaza5 ? (($deck === 'boginje') ? 72 : 88) : ($isFaza2 ? 72 : 88);
 
 // Validate card range by phase deck
 if ($karta < 1 || $karta > $maxKartaId) {
@@ -73,29 +132,26 @@ if ($karta < 1 || $karta > $maxKartaId) {
     exit;
 }
 
-// Verify the row exists and karta is still NULL
-$row = $db->query_first(
-    "SELECT id FROM izvucene_karte " .
-    "WHERE konsultacija='" . $konsultacija . "' " .
-    "AND datum='" . $datum . "' " .
-    "AND karta IS NULL"
-);
-
-if (!$row) {
-    echo json_encode(['success' => false, 'error' => 'Card already saved or slot not found']);
-    exit;
-}
-
 // Save the card
 $db->query(
     "UPDATE izvucene_karte SET karta='" . $karta . "' " .
-    "WHERE konsultacija='" . $konsultacija . "' " .
-    "AND datum='" . $datum . "' " .
-    "AND karta IS NULL"
+    ($isFaza5
+        ? "WHERE id='" . $rowId . "' AND konsultacija='" . $konsultacija . "' AND karta IS NULL"
+        : "WHERE konsultacija='" . $konsultacija . "' AND datum='" . $datum . "' AND karta IS NULL")
 );
 
 // Fetch the card name from phase-appropriate table
-if ($isFaza2) {
+if ($isFaza5 && $deck === 'boginje') {
+    $kontal = $db->query_first(
+        "SELECT naziv FROM karte_boginje WHERE id='" . $karta . "'"
+    );
+    $imgPath = '/img/boginje/' . $karta . '.jpg';
+} elseif ($isFaza5 && $deck === 'konstelacije') {
+    $kontal = $db->query_first(
+        "SELECT naziv FROM karte_kontalacije WHERE id='" . $karta . "'"
+    );
+    $imgPath = '/img/konstelacija/' . $karta . '.jpg';
+} elseif ($isFaza2) {
     $kontal = $db->query_first(
         "SELECT naziv FROM karte_boginje WHERE id='" . $karta . "'"
     );

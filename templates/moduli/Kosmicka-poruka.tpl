@@ -8,12 +8,12 @@
 {assign var="kpPlanete" value=["☉","♀","♂","♄"]}
 {/if}
 
-<div id="kosmicka-content-{$kp.konsultacija}" class="kosmicka-poruka-content{if $kp.is_faza_2} kosmicka-faza2-simple{/if}">
+<div id="kosmicka-content-{$kp.konsultacija}" class="kosmicka-poruka-content{if $kp.is_faza_2} kosmicka-faza2-simple{/if}{if $kp.faza == 5} kosmicka-faza5-mode{/if}" data-faza="{$kp.faza}">
 
     <h3 class="kosmicka-naslov">{$kp.naslov}</h3>
 
     {* Scoring popup template (hidden) *}
-    {if !$kp.is_faza_2}
+    {if !$kp.is_faza_2 && $kp.faza != 5}
     <div id="kosmicka-score-dialog" style="display:none;">
         <div class="kp-dialog-inner">
         <p style="margin-bottom:12px;font-size:13px;">Na skali od 0 do 10 ocenite svaki odgovor.</p>
@@ -60,11 +60,13 @@
     </div>
 
     {* Main grid wrapper — all card groups *}
-    <div class="kosmicka-grid-wrapper"
+        <div class="kosmicka-grid-wrapper"
          data-konsultacija="{$kp.konsultacija}"
+            data-faza="{$kp.faza}"
          data-kolona="{$kp.kolona}"
          data-bottom-up="{if $kpBottomUp}1{else}0{/if}"
             data-is-faza-2="{if $kp.is_faza_2}1{else}0{/if}"
+            data-key-belief-id="{$kp.key_belief_id|default:0}"
          data-ukupan-broj="{$kp.ukupan_broj}"
          data-today="{$kp.today}"
          data-ukupni-prosek="{if $kp.ukupni_prosek !== null}{$kp.ukupni_prosek}{else}-1{/if}">
@@ -226,13 +228,168 @@
     </div>{* .kosmicka-grid-wrapper *}
 
     {* Summary sentence when all done *}
-    {if !$kp.is_faza_2 && $kp.zavrseno}
+    {if !$kp.is_faza_2 && $kp.faza != 5 && $kp.zavrseno}
     <div class="kosmicka-summary">
         {if $kpBottomUp}
         Snaga Dharmičke Vertikale za uverenje '{$kp.ukupan_broj}.' narednog života je '{$kp.ukupni_prosek}%'
         {else}
         Snaga Karmičke Vertikale za uverenje '{$kp.ukupan_broj}.' prethodnog života je '{$kp.ukupni_prosek}%'
         {/if}
+    </div>
+    {/if}
+
+    {if $kp.faza == 5}
+    <div class="kosmicka-phase5-block">
+        {assign var="kpColsPerRow" value=6}
+        {foreach from=$kp.faza5_dani item=dan name=faza5days}
+            {if $smarty.foreach.faza5days.index % $kpColsPerRow == 0}
+                {if !$smarty.foreach.faza5days.first}</div>{/if}
+                <div class="kosmicka-phase5-rowset">
+            {/if}
+
+            <div class="kosmicka-phase5-col" data-datum="{$dan.datum}">
+                {assign var=slotTop value=$dan.top}
+                {if isset($slotTop) && $slotTop != null}
+                <div class="kosmicka-card-date kosmicka-phase5-date">{$dan.datum_prikaz}</div>
+                <div class="kosmicka-card-name kosmicka-phase5-card-name">{if $slotTop.naziv && $slotTop.naziv != ''}{$slotTop.naziv}{/if}</div>
+                <div class="kosmicka-card-slot kosmicka-phase5-slot kosmicka-phase5-top"
+                     data-datum="{$slotTop.datum}"
+                     data-row-id="{$slotTop.row_id}"
+                     data-slot-position="top"
+                     data-deck="{$slotTop.deck}"
+                     data-img-base="{$slotTop.base_img}"
+                     data-idx="{$slotTop.row_id}">
+                    {if $slotTop.karta && $slotTop.karta != ''}
+                        <div class="kosmicka-card-img-wrap">
+                            <img src="{$slotTop.img_path}"
+                                 alt="{$slotTop.naziv|default:''|escape:'html'}"
+                                 class="kosmicka-card-img clickable-kosmicka"
+                                 data-img="{$slotTop.img_path}"
+                                 data-naziv="{$slotTop.naziv|default:''|escape:'html'}"
+                                 data-row-id="{$slotTop.row_id}"
+                                 data-deck="{$slotTop.deck}" />
+                            <span class="kosmicka-num kosmicka-num-center">+{$slotTop.display_number}</span>
+                        </div>
+                    {elseif $slotTop.can_draw}
+                        {if $kp.digitalno}
+                            <div class="kosmicka-card-img-wrap kosmicka-draw-digital"
+                                 data-konsultacija="{$kp.konsultacija}"
+                                 data-datum="{$slotTop.datum}"
+                                 data-row-id="{$slotTop.row_id}"
+                                                                 data-slot-position="top"
+                                 data-deck="{$slotTop.deck}"
+                                   data-img-base="{$slotTop.base_img}"
+                                 data-idx="{$slotTop.row_id}"
+                                 data-back-img="{$slotTop.back_img}">
+                                <img src="{$slotTop.back_img}"
+                                     alt="Izvuci kartu"
+                                     class="kosmicka-card-img" />
+                                <span class="kosmicka-num kosmicka-num-center">+{$slotTop.display_number}</span>
+                            </div>
+                        {else}
+                            <div class="kosmicka-card-img-wrap">
+                                <img src="{$slotTop.back_img}"
+                                     alt="Fizička karta"
+                                     class="kosmicka-card-img" />
+                                <span class="kosmicka-num kosmicka-num-center">+{$slotTop.display_number}</span>
+                            </div>
+                            <select class="kosmicka-select"
+                                    data-konsultacija="{$kp.konsultacija}"
+                                    data-datum="{$slotTop.datum}"
+                                    data-row-id="{$slotTop.row_id}"
+                                    data-slot-position="top"
+                                    data-deck="{$slotTop.deck}"
+                                data-img-base="{$slotTop.base_img}"
+                                    data-idx="{$slotTop.row_id}">
+                                <option value="">— izaberite —</option>
+                                {foreach from=$kp.kontalacije_konstelacije item=kon}
+                                <option value="{$kon.id}">{$kon.naziv}</option>
+                                {/foreach}
+                            </select>
+                        {/if}
+                    {else}
+                        <div class="kosmicka-card-img-wrap">
+                            <img src="{$slotTop.back_img}"
+                                 alt="Zatvorena karta"
+                                 class="kosmicka-card-img" />
+                            <span class="kosmicka-num kosmicka-num-center">+{$slotTop.display_number}</span>
+                        </div>
+                    {/if}
+                </div>
+                {/if}
+
+                {assign var=slotBottom value=$dan.bottom}
+                {if isset($slotBottom) && $slotBottom != null}
+                <div class="kosmicka-card-date kosmicka-phase5-date kosmicka-phase5-date-bottom">{$dan.datum_prikaz}</div>
+                <div class="kosmicka-card-name kosmicka-phase5-card-name">{if $slotBottom.naziv && $slotBottom.naziv != ''}{$slotBottom.naziv}{/if}</div>
+                <div class="kosmicka-card-slot kosmicka-phase5-slot kosmicka-phase5-bottom"
+                     data-datum="{$slotBottom.datum}"
+                     data-row-id="{$slotBottom.row_id}"
+                     data-slot-position="bottom"
+                     data-deck="{$slotBottom.deck}"
+                     data-img-base="{$slotBottom.base_img}"
+                     data-idx="{$slotBottom.row_id}">
+                    {if $slotBottom.karta && $slotBottom.karta != ''}
+                        <div class="kosmicka-card-img-wrap">
+                            <img src="{$slotBottom.img_path}"
+                                 alt="{$slotBottom.naziv|default:''|escape:'html'}"
+                                 class="kosmicka-card-img clickable-kosmicka"
+                                 data-img="{$slotBottom.img_path}"
+                                 data-naziv="{$slotBottom.naziv|default:''|escape:'html'}"
+                                 data-row-id="{$slotBottom.row_id}"
+                                 data-deck="{$slotBottom.deck}" />
+                            <span class="kosmicka-num kosmicka-num-center">-{$slotBottom.display_number}</span>
+                        </div>
+                    {elseif $slotBottom.can_draw}
+                        {if $kp.digitalno}
+                            <div class="kosmicka-card-img-wrap kosmicka-draw-digital"
+                                 data-konsultacija="{$kp.konsultacija}"
+                                 data-datum="{$slotBottom.datum}"
+                                 data-row-id="{$slotBottom.row_id}"
+                                                                 data-slot-position="bottom"
+                                 data-deck="{$slotBottom.deck}"
+                                   data-img-base="{$slotBottom.base_img}"
+                                 data-idx="{$slotBottom.row_id}"
+                                 data-back-img="{$slotBottom.back_img}">
+                                <img src="{$slotBottom.back_img}"
+                                     alt="Izvuci kartu"
+                                     class="kosmicka-card-img" />
+                                <span class="kosmicka-num kosmicka-num-center">-{$slotBottom.display_number}</span>
+                            </div>
+                        {else}
+                            <div class="kosmicka-card-img-wrap">
+                                <img src="{$slotBottom.back_img}"
+                                     alt="Fizička karta"
+                                     class="kosmicka-card-img" />
+                                <span class="kosmicka-num kosmicka-num-center">-{$slotBottom.display_number}</span>
+                            </div>
+                            <select class="kosmicka-select"
+                                    data-konsultacija="{$kp.konsultacija}"
+                                    data-datum="{$slotBottom.datum}"
+                                    data-row-id="{$slotBottom.row_id}"
+                                    data-slot-position="bottom"
+                                    data-deck="{$slotBottom.deck}"
+                                data-img-base="{$slotBottom.base_img}"
+                                    data-idx="{$slotBottom.row_id}">
+                                <option value="">— izaberite —</option>
+                                {foreach from=$kp.kontalacije_boginje item=kon}
+                                <option value="{$kon.id}">{$kon.naziv}</option>
+                                {/foreach}
+                            </select>
+                        {/if}
+                    {else}
+                        <div class="kosmicka-card-img-wrap">
+                            <img src="{$slotBottom.back_img}"
+                                 alt="Zatvorena karta"
+                                 class="kosmicka-card-img" />
+                            <span class="kosmicka-num kosmicka-num-center">-{$slotBottom.display_number}</span>
+                        </div>
+                    {/if}
+                </div>
+                {/if}
+            </div>
+            {if $smarty.foreach.faza5days.last}</div>{/if}
+        {/foreach}
     </div>
     {/if}
 
@@ -248,6 +405,62 @@
     .kosmicka-poruka-content {
         overflow-x: hidden;
         padding-bottom: 10px;
+    }
+    .kosmicka-faza5-mode .kosmicka-grid-wrapper,
+    .kosmicka-faza5-mode .kosmicka-summary {
+        display: none;
+    }
+    .kosmicka-phase5-block {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 10px;
+    }
+    .kosmicka-phase5-rowset {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(255, 215, 0, 0.25);
+        overflow-x: auto;
+    }
+    .kosmicka-phase5-col {
+        width: var(--kp-card-w);
+        min-width: var(--kp-card-w);
+    }
+    .kosmicka-phase5-date {
+        min-height: 16px;
+        margin-bottom: 4px;
+        text-align: center;
+        font-size: 12px;
+        color: #f0e3c0;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+    .kosmicka-phase5-date-bottom {
+        margin-top: 12px;
+    }
+    .kosmicka-phase5-slot {
+        width: 100%;
+        min-width: 100%;
+    }
+    .kosmicka-phase5-card-name {
+        min-height: 18px;
+        margin-bottom: 2px;
+        font-size: 12px;
+        color: #ffffff;
+    }
+    .kosmicka-phase5-top .kosmicka-card-img-wrap {
+        box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.2);
+    }
+    .kosmicka-phase5-bottom .kosmicka-card-img-wrap {
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+    .kosmicka-phase5-slot .kosmicka-select {
+        margin-top: 2px;
     }
     .kosmicka-grid-wrapper {
         min-width: 0;
@@ -431,7 +644,9 @@
         box-shadow: 0 0 0 2px #c54242 inset;
     }
     .kosmicka-key-belief-border .kosmicka-card-img-wrap {
-        box-shadow: 0 0 0 5px #6f2dbd inset;
+        box-shadow: 0 0 0 5px #6f2dbd inset, 0 0 14px rgba(143, 61, 240, 0.75);
+        outline: 4px solid #8f3df0;
+        outline-offset: -4px;
     }
     .kosmicka-summary {
         margin-top: 14px;
@@ -501,6 +716,15 @@
         }
         .kosmicka-grid-wrapper {
             min-width: 980px;
+        }
+    }
+    @media (max-width: 768px) {
+        .kosmicka-phase5-col {
+            width: 98px;
+            min-width: 98px;
+        }
+        .kosmicka-phase5-date {
+            font-size: 11px;
         }
     }
 </style>

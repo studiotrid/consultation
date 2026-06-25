@@ -530,6 +530,123 @@ box-shadow: 0px 0px 25px 3px rgba(206,153,89,1);
       padding: 50px 0;
     }
 
+    .precnikSvestiPrikaz,
+    .vezaIzmedjuCakriPrikaz,
+    .chartVisegJaPrikaz{
+      width: 100%;
+      order: last;
+      padding: 30px 0 50px;
+      text-align: center;
+      background: rgba(15, 36, 65, 0.6);
+      border-radius: 10px;
+    }
+
+    .precnikSvestiNaslov,
+    .vezaIzmedjuCakriNaslov,
+    .chartVisegJaNaslov{
+      margin: 0 0 20px;
+      font-size: 34px;
+      color: #ffffff;
+      font-weight: normal;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .precnikSvestiNaslov{ color: #efbf00; }
+    .precnikSvestiNaslov::first-line{ color: #efbf00; }
+
+    .precnikSvestiCanvas{
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .precnikSvestiSlika{
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      position: relative;
+      top: 0;
+      left: auto;
+      transform: none;
+      opacity: 0.95;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .precnikSvestiLinija{
+      position: absolute;
+      left: calc(50% - 10px);
+      transform: translateX(-50%);
+      width: 8px;
+      border-radius: 999px;
+      background: #efbf00;
+      z-index: 3;
+      pointer-events: none;
+      box-shadow: 0 0 0 2px rgba(239, 191, 0, 0.2);
+    }
+
+    .precnikSvestiTackaTop,
+    .precnikSvestiTackaBottom{
+      position: absolute;
+      left: calc(50% - 10px);
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #efbf00;
+      z-index: 4;
+      pointer-events: none;
+      box-shadow: 0 0 0 3px rgba(239, 191, 0, 0.25);
+    }
+
+    .precnikSvestiLabelTop,
+    .precnikSvestiLabelBottom{
+      position: absolute;
+      left: 18px;
+      transform: translateY(-50%);
+      font-size: 50px;
+      line-height: 1;
+      color: #000000;
+      font-family: Georgia, "Times New Roman", serif;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .vezaIzmedjuCakriSlika,
+    .chartVisegJaSlika{
+      display: block;
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px){
+      .precnikSvestiNaslov,
+      .vezaIzmedjuCakriNaslov,
+      .chartVisegJaNaslov{
+        font-size: 28px;
+      }
+
+      .precnikSvestiCanvas{
+        min-height: 0;
+      }
+
+      .precnikSvestiSlika{
+        width: 100%;
+      }
+
+      .precnikSvestiLabelTop,
+      .precnikSvestiLabelBottom{
+        font-size: 40px;
+        left: 12px;
+      }
+    }
+
     .radiocheck{
    display:inline-block;
    width:20px;

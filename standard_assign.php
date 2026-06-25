@@ -27,5 +27,14 @@
            
     $smarty->assign('language',$_SESSION['language']);
     $smarty->assign('date_format',$date_format);
-    $smarty->assign('rnd',rand(0,65500));
+    $assetCss = WEBROOT . BASEPATH . 'inc/css/custom.css';
+    $assetJs  = WEBROOT . BASEPATH . 'inc/js/custom.js';
+    $assetVer = max(
+        @filemtime($assetCss) ? intval(@filemtime($assetCss)) : 0,
+        @filemtime($assetJs) ? intval(@filemtime($assetJs)) : 0
+    );
+    if ($assetVer <= 0) {
+        $assetVer = time();
+    }
+    $smarty->assign('rnd', $assetVer);
 ?>

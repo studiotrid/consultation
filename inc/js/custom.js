@@ -475,6 +475,127 @@
 
             $(this).closest('.ui-accordion-content, .modulHolder').append(andjeoF2Html);
         });
+
+        // Precnik svesti (module 106)
+        $('.precnikSvestiModul').each(function(){
+            var naslov = $(this).data('title') || '';
+            var half = parseInt($(this).data('half'), 10) || 1;
+            var image = $(this).data('image') || '';
+            var precnikId = 'precnik_svesti_' + Math.random().toString(36).substr(2, 9);
+            $(this).attr('data-precnik-svesti-id', precnikId);
+
+            var precnikHtml = '<div class="precnikSvestiPrikaz dn" id="' + precnikId + '">' +
+                '<h4 class="precnikSvestiNaslov">' + naslov + '</h4>' +
+                '<div class="precnikSvestiCanvas">' +
+                '<img src="' + image + '" alt="Veza između čakri" class="precnikSvestiSlika" />' +
+                '<div class="precnikSvestiLinija"></div>' +
+                '<div class="precnikSvestiTackaTop"></div>' +
+                '<div class="precnikSvestiTackaBottom"></div>' +
+                '<div class="precnikSvestiLabelTop">+' + half + '</div>' +
+                '<div class="precnikSvestiLabelBottom">-' + half + '</div>' +
+                '</div>' +
+                '</div>';
+
+            var $holder = $(this).closest('.ui-accordion-content, .modulHolder');
+            $holder.append(precnikHtml);
+
+            var $content = $('#' + precnikId);
+            var $canvas = $content.find('.precnikSvestiCanvas');
+            var $img = $content.find('.precnikSvestiSlika');
+            var $line = $content.find('.precnikSvestiLinija');
+            var $dotTop = $content.find('.precnikSvestiTackaTop');
+            var $dotBottom = $content.find('.precnikSvestiTackaBottom');
+            var $labelTop = $content.find('.precnikSvestiLabelTop');
+            var $labelBottom = $content.find('.precnikSvestiLabelBottom');
+
+            function renderPrecnikLinija(){
+                var imageHeight = $img.height();
+                if(!imageHeight || imageHeight <= 0){
+                    return;
+                }
+
+                var imageTop = parseFloat($img.css('top')) || 0;
+                var srceY = imageTop + imageHeight * 0.52;
+                var glavaY = imageTop + imageHeight * 0.08;
+                var stopalaY = imageTop + imageHeight * 0.92;
+
+                var minHalf = Math.max((srceY - glavaY) + 18, (stopalaY - srceY) + 18);
+                var maxHalf = minHalf + 130;
+                var halfNorm = Math.max(1, Math.min(72, half));
+                var halfLen = minHalf + ((halfNorm - 1) / 71) * (maxHalf - minHalf);
+
+                // Keep the whole line inside the image even at maximum value (precnik 144 / half 72).
+                var topInset = 12;
+                var bottomInset = 28;
+                var maxHalfInImage = Math.min(
+                    srceY - (imageTop + topInset),
+                    (imageTop + imageHeight - bottomInset) - srceY
+                );
+                if(maxHalfInImage > 0){
+                    halfLen = Math.min(halfLen, maxHalfInImage);
+                }
+
+                var lineTop = srceY - halfLen;
+                var lineHeight = halfLen * 2;
+                var lineBottom = lineTop + lineHeight;
+
+                $line.css({
+                    top: lineTop + 'px',
+                    height: lineHeight + 'px'
+                });
+
+                $dotTop.css({
+                    top: lineTop + 'px'
+                });
+
+                $dotBottom.css({
+                    top: lineBottom + 'px'
+                });
+
+                $labelTop.css({ top: lineTop + 'px' });
+                $labelBottom.css({
+                    top: lineBottom + 'px'
+                });
+            }
+
+            $content.data('render-precnik-svesti', renderPrecnikLinija);
+
+            $img.on('load', renderPrecnikLinija);
+            if($img[0] && $img[0].complete){
+                renderPrecnikLinija();
+            }
+            $(window).on('resize', renderPrecnikLinija);
+        });
+
+        // Veza izmedju cakri (module 107)
+        $('.vezaIzmedjuCakriModul').each(function(){
+            var naslov = $(this).data('title') || '';
+            var image = $(this).data('image') || '';
+            var vezaId = 'veza_izmedju_cakri_' + Math.random().toString(36).substr(2, 9);
+            $(this).attr('data-veza-izmedju-cakri-id', vezaId);
+
+            var vezaHtml = '<div class="vezaIzmedjuCakriPrikaz dn" id="' + vezaId + '">' +
+                '<h4 class="vezaIzmedjuCakriNaslov">' + naslov + '</h4>' +
+                '<img src="' + image + '" alt="' + naslov + '" class="vezaIzmedjuCakriSlika" />' +
+                '</div>';
+
+            $(this).closest('.ui-accordion-content, .modulHolder').append(vezaHtml);
+        });
+
+        // Chart viseg ja (module 108)
+        $('.chartVisegJaModul').each(function(){
+            var naslov = $(this).data('title') || '';
+            var image = $(this).data('image') || '';
+            var chartId = 'chart_viseg_ja_' + Math.random().toString(36).substr(2, 9);
+            $(this).attr('data-chart-viseg-ja-id', chartId);
+
+            var chartHtml = '<div class="chartVisegJaPrikaz dn" id="' + chartId + '">' +
+                '<h4 class="chartVisegJaNaslov">' + naslov + '</h4>' +
+                '<img src="' + image + '" alt="Chart Višeg Ja" class="chartVisegJaSlika" />' +
+                '</div>';
+
+            $(this).closest('.ui-accordion-content, .modulHolder').append(chartHtml);
+        });
         
         // Termini (Karmic Test Schedule) module
         $('.terminiModul').each(function(){
@@ -857,6 +978,38 @@
                 scrollToContent($('#' + andjeoF2Id));
         }
     });
+
+    $('.precnikSvestiModul').on('click', function(){
+        var precnikId = $(this).attr('data-precnik-svesti-id');
+        var $content = $('#' + precnikId);
+        $content.toggleClass('dn');
+        $(this).toggleClass('active');
+        if(!$content.hasClass('dn')){
+                var renderFn = $content.data('render-precnik-svesti');
+                if(typeof renderFn === 'function'){
+                    setTimeout(function(){ renderFn(); }, 30);
+                }
+                scrollToContent($content);
+        }
+    });
+
+    $('.vezaIzmedjuCakriModul').on('click', function(){
+        var vezaId = $(this).attr('data-veza-izmedju-cakri-id');
+        $('#' + vezaId).toggleClass('dn');
+        $(this).toggleClass('active');
+        if(!$('#' + vezaId).hasClass('dn')){
+                scrollToContent($('#' + vezaId));
+        }
+    });
+
+    $('.chartVisegJaModul').on('click', function(){
+        var chartId = $(this).attr('data-chart-viseg-ja-id');
+        $('#' + chartId).toggleClass('dn');
+        $(this).toggleClass('active');
+        if(!$('#' + chartId).hasClass('dn')){
+                scrollToContent($('#' + chartId));
+        }
+    });
     
     $('.terminiModul').on('click', function(){
         var terminiId = $(this).attr('data-termini-id');
@@ -1031,15 +1184,19 @@
     $(function() {
         $('.kosmicka-poruka-content').each(function() {
             var $content = $(this);
-            var isFaza2 = parseInt($content.find('.kosmicka-grid-wrapper').data('is-faza-2'), 10) === 1;
-            if (!isFaza2) {
+            var $grid = $content.find('.kosmicka-grid-wrapper');
+            var isFaza2 = parseInt($grid.data('is-faza-2'), 10) === 1;
+            var faza = parseInt($grid.data('faza'), 10) || 0;
+            if (!isFaza2 && faza !== 5) {
                 renderKarmickaVertikala($content);
             }
 
             // Scroll to today's card so it is always visible (useful on mobile)
-            var today = $content.find('.kosmicka-grid-wrapper').data('today');
+            var today = $grid.data('today');
             if (!today) return;
-            var $todaySlot = $content.find('.kosmicka-card-slot[data-datum="' + today + '"]');
+            var $todaySlot = faza === 5
+                ? $content.find('.kosmicka-phase5-col[data-datum="' + today + '"]')
+                : $content.find('.kosmicka-card-slot[data-datum="' + today + '"]');
             if (!$todaySlot.length) return;
             var slotLeft      = $todaySlot.offset().left - $content.offset().left + $content.scrollLeft();
             var scrollTo      = slotLeft - ($content.outerWidth() / 2) + ($todaySlot.outerWidth() / 2);
@@ -1047,32 +1204,116 @@
         });
     });
 
+    function resolveKosmickaDeck($el, isFaza5, isFaza2, fallbackPath) {
+        var deck = ($el.data('deck') || '').toString().trim();
+
+        if (isFaza5) {
+            if (deck !== 'konstelacije' && deck !== 'boginje') {
+                if ($el.closest('.kosmicka-phase5-bottom').length > 0) {
+                    deck = 'boginje';
+                } else if ($el.closest('.kosmicka-phase5-top').length > 0) {
+                    deck = 'konstelacije';
+                } else if ((fallbackPath || '').indexOf('/boginje/') !== -1) {
+                    deck = 'boginje';
+                } else {
+                    deck = 'konstelacije';
+                }
+            }
+            return deck;
+        }
+
+        return isFaza2 ? 'boginje' : 'konstelacije';
+    }
+
+    function resolveKosmickaPhase5SlotMeta($el) {
+        var $slot = $el.closest('.kosmicka-card-slot');
+        var slotPosition = ($slot.data('slot-position') || $el.data('slot-position') || '').toString().trim();
+        var isBottom = (slotPosition === 'bottom') || $slot.hasClass('kosmicka-phase5-bottom');
+        return {
+            $slot: $slot,
+            slotPosition: isBottom ? 'bottom' : 'top',
+            deck: isBottom ? 'boginje' : 'konstelacije',
+            imgBase: isBottom ? '/img/boginje/' : '/img/konstelacija/'
+        };
+    }
+
+    function resolveKosmickaImgBase($el, isFaza5, isFaza2, fallbackPath) {
+        var imgBase = ($el.data('img-base') || '').toString().trim();
+        if (imgBase) {
+            return imgBase.charAt(imgBase.length - 1) === '/' ? imgBase : (imgBase + '/');
+        }
+
+        var deck = resolveKosmickaDeck($el, isFaza5, isFaza2, fallbackPath);
+        if (deck === 'boginje') {
+            return '/img/boginje/';
+        }
+        return '/img/konstelacija/';
+    }
+
+    var kpBindGuardKey = '__kpKosmickaBindings_v20260611_1';
+    if (!window[kpBindGuardKey]) {
+        window[kpBindGuardKey] = true;
+
     // --- Physical mode: select constellation from dropdown ---
-    $(document).on('change', '.kosmicka-select', function() {
+    $(document).off('change', '.kosmicka-select').on('change', '.kosmicka-select', function() {
         var $sel      = $(this);
         var karta     = parseInt($sel.val());
         if (!karta) return;
         var datum     = $sel.data('datum');
         var konsult   = $sel.data('konsultacija');
         var idx       = $sel.data('idx');
-        var isFaza2   = parseInt($sel.closest('.kosmicka-grid-wrapper').data('is-faza-2'), 10) === 1;
+        var rowId     = parseInt($sel.data('row-id'), 10) || 0;
+        var $selGrid  = $sel.closest('.kosmicka-grid-wrapper');
+        var $selRoot  = $sel.closest('.kosmicka-poruka-content');
+        var selFazaRaw = $selGrid.length ? $selGrid.data('faza') : $selRoot.data('faza');
+        var isFaza2   = parseInt($selGrid.data('is-faza-2'), 10) === 1;
+        var isFaza5   = parseInt(selFazaRaw, 10) === 5;
+        var selLabelText = ($sel.closest('.kosmicka-card-slot').find('.kosmicka-num').first().text() || '').trim();
+        var selNegativeLabel = /^-/.test(selLabelText);
+        var deck      = resolveKosmickaDeck($sel, isFaza5, isFaza2, '');
+        var imgBase   = resolveKosmickaImgBase($sel, isFaza5, isFaza2, '');
+        var phase5Meta = isFaza5 ? resolveKosmickaPhase5SlotMeta($sel) : null;
+        if (phase5Meta) {
+            deck = phase5Meta.deck;
+            imgBase = phase5Meta.imgBase;
+            var selSlotPos = (($sel.data('slot-position') || phase5Meta.$slot.data('slot-position') || '').toString().trim());
+            if (selSlotPos === 'bottom') {
+                deck = 'boginje';
+                imgBase = '/img/boginje/';
+                phase5Meta.slotPosition = 'bottom';
+            } else if (selSlotPos === 'top') {
+                deck = 'konstelacije';
+                imgBase = '/img/konstelacija/';
+                phase5Meta.slotPosition = 'top';
+            }
+        }
 
         $.ajax({
             url: '/inc/ajax/save_kosmicka_karta.php',
             type: 'POST',
-            data: { konsultacija: konsult, datum: datum, karta: karta },
+            data: { konsultacija: konsult, datum: datum, karta: karta, row_id: rowId, deck: deck, slot_position: phase5Meta ? phase5Meta.slotPosition : '' },
             dataType: 'json',
             success: function(resp) {
                 if (resp.success) {
-                    var $slot = $sel.closest('.kosmicka-card-slot');
+                    var $slot = isFaza5 && phase5Meta ? phase5Meta.$slot : $sel.closest('.kosmicka-card-slot');
+                    var keyBeliefId = parseInt($sel.closest('.kosmicka-grid-wrapper').data('key-belief-id'), 10) || 0;
+                    var finalImgPath = resp.img_path || (imgBase + resp.karta_id + '.jpg');
+                    if (isFaza5 && selNegativeLabel) {
+                        finalImgPath = '/img/boginje/' + resp.karta_id + '.jpg';
+                    } else if (isFaza5 && !selNegativeLabel) {
+                        finalImgPath = '/img/konstelacija/' + resp.karta_id + '.jpg';
+                    }
                     $slot.find('.kosmicka-card-name').text(resp.naziv);
-                    $slot.find('.kosmicka-card-img').attr('src', resp.img_path)
+                    $slot.find('.kosmicka-card-img').attr('src', finalImgPath)
                         .addClass('clickable-kosmicka')
-                        .data('img', resp.img_path)
+                        .data('img', finalImgPath)
                         .data('naziv', resp.naziv);
                     $slot.find('.kosmicka-num').removeClass('kosmicka-num-center').addClass('kosmicka-num-drawn');
+                    if (keyBeliefId > 0 && karta === keyBeliefId) {
+                        $slot.addClass('kosmicka-key-belief-border');
+                    }
                     $sel.hide();
-                    if (!isFaza2) {
+                    if (!isFaza2 && !isFaza5) {
                         openKosmickaScoreDialog(konsult, datum, idx);
                     }
                 }
@@ -1081,32 +1322,61 @@
     });
 
     // --- Digital mode: click to draw ---
-    $(document).on('click', '.kosmicka-draw-digital', function() {
+    $(document).off('click', '.kosmicka-draw-digital').on('click', '.kosmicka-draw-digital', function() {
         var $wrap   = $(this);
         if ($wrap.data('drawing')) return;
         $wrap.data('drawing', true);
         var datum   = $wrap.data('datum');
         var konsult = $wrap.data('konsultacija');
         var idx     = $wrap.data('idx');
+        var rowId   = parseInt($wrap.data('row-id'), 10) || 0;
         var backImg = $wrap.data('back-img') || '/img/konstelacija/0.jpg';
-        var isFaza2 = parseInt($wrap.closest('.kosmicka-grid-wrapper').data('is-faza-2'), 10) === 1;
+        var $wrapGrid = $wrap.closest('.kosmicka-grid-wrapper');
+        var $wrapRoot = $wrap.closest('.kosmicka-poruka-content');
+        var wrapFazaRaw = $wrapGrid.length ? $wrapGrid.data('faza') : $wrapRoot.data('faza');
+        var isFaza2 = parseInt($wrapGrid.data('is-faza-2'), 10) === 1;
+        var isFaza5 = parseInt(wrapFazaRaw, 10) === 5;
+        var slotPosition = (($wrap.attr('data-slot-position') || $wrap.closest('.kosmicka-card-slot').attr('data-slot-position') || '').toString().trim().toLowerCase());
+        var isPhase5Bottom = isFaza5 && $wrap.closest('.kosmicka-phase5-bottom').length > 0;
+        var deck    = isPhase5Bottom ? 'boginje' : resolveKosmickaDeck($wrap, isFaza5, isFaza2, backImg);
+        var imgBase = isPhase5Bottom ? '/img/boginje/' : resolveKosmickaImgBase($wrap, isFaza5, isFaza2, backImg);
+        var phase5Meta = isFaza5 ? resolveKosmickaPhase5SlotMeta($wrap) : null;
+        if (phase5Meta && !isPhase5Bottom) {
+            deck = phase5Meta.deck;
+            imgBase = phase5Meta.imgBase;
+        }
+        var phase5Boginje = false;
+        if (isFaza5) {
+            phase5Boginje = (slotPosition === 'bottom') || (backImg.indexOf('/boginje/') !== -1) || isPhase5Bottom;
+            deck = phase5Boginje ? 'boginje' : 'konstelacije';
+            imgBase = phase5Boginje ? '/img/boginje/' : '/img/konstelacija/';
+            if (phase5Meta) {
+                phase5Meta.slotPosition = phase5Boginje ? 'bottom' : 'top';
+            }
+        }
         var shuffleTimer = null;
+        var isBoginjeDeck = isFaza2 || (isFaza5 && phase5Boginje) || (deck === 'boginje');
 
-        // Show shuffle animation: phase 2 cycles goddess cards, other phases keep existing gif.
-        if (isFaza2) {
-            shuffleTimer = setInterval(function() {
-                var shuffleCard = Math.floor(Math.random() * 72) + 1;
-                $wrap.find('.kosmicka-card-img').attr('src', '/img/boginje/' + shuffleCard + '.jpg');
-            }, 120);
+        // In phase 5, use deterministic per-deck GIF so the animation stays deck-correct.
+        if (isFaza5) {
+            var phase5Gif = phase5Boginje
+                ? '/img/boginje_shuffle.gif'
+                : '/img/konstelacija_shuffle.gif';
+            $wrap.find('.kosmicka-card-img').attr('src', phase5Gif + '?t=' + new Date().getTime());
+        } else if (isBoginjeDeck) {
+            $wrap.find('.kosmicka-card-img').attr('src', '/img/boginje_shuffle.gif?t=' + new Date().getTime());
         } else {
-            $wrap.find('.kosmicka-card-img').attr('src', '/img/karte/vrti.gif');
+            shuffleTimer = setInterval(function() {
+                var shuffleCard = Math.floor(Math.random() * 88) + 1;
+                $wrap.find('.kosmicka-card-img').attr('src', '/img/konstelacija/' + shuffleCard + '.jpg');
+            }, 120);
         }
 
         setTimeout(function() {
             $.ajax({
                 url: '/inc/ajax/draw_kosmicka_karta.php',
                 type: 'POST',
-                data: { konsultacija: konsult, datum: datum },
+                data: { konsultacija: konsult, datum: datum, row_id: rowId, deck: deck, slot_position: (isFaza5 ? (phase5Boginje ? 'bottom' : 'top') : (phase5Meta ? phase5Meta.slotPosition : '')) },
                 dataType: 'json',
                 success: function(resp) {
                     if (shuffleTimer) {
@@ -1114,16 +1384,22 @@
                         shuffleTimer = null;
                     }
                     if (resp.success) {
-                        var $slot = $wrap.closest('.kosmicka-card-slot');
+                        var $slot = isFaza5 && phase5Meta ? phase5Meta.$slot : $wrap.closest('.kosmicka-card-slot');
+                        var keyBeliefId = parseInt($wrap.closest('.kosmicka-grid-wrapper').data('key-belief-id'), 10) || 0;
+                        var drawnKartaId = parseInt(resp.karta_id, 10) || 0;
+                        var finalImgPath = resp.img_path || (imgBase + drawnKartaId + '.jpg');
                         $slot.find('.kosmicka-card-name').text(resp.naziv);
                         $wrap.find('.kosmicka-card-img')
-                            .attr('src', resp.img_path)
+                            .attr('src', finalImgPath)
                             .addClass('clickable-kosmicka')
-                            .data('img', resp.img_path)
+                            .data('img', finalImgPath)
                             .data('naziv', resp.naziv);
                         $wrap.find('.kosmicka-num').removeClass('kosmicka-num-center').addClass('kosmicka-num-drawn');
+                        if (keyBeliefId > 0 && drawnKartaId > 0 && drawnKartaId === keyBeliefId) {
+                            $slot.addClass('kosmicka-key-belief-border');
+                        }
                         $wrap.removeClass('kosmicka-draw-digital');
-                        if (!isFaza2) {
+                        if (!isFaza2 && !isFaza5) {
                             openKosmickaScoreDialog(konsult, datum, idx);
                         }
                     } else {
@@ -1144,7 +1420,7 @@
     });
 
     // --- Enlarge card on click ---
-    $(document).on('click', '.clickable-kosmicka', function() {
+    $(document).off('click', '.clickable-kosmicka').on('click', '.clickable-kosmicka', function() {
         var imgSrc = $(this).data('img') || $(this).attr('src');
         var naziv  = $(this).data('naziv') || '';
         if (!$('#kosmicka-img-modal').length) {
@@ -1158,6 +1434,8 @@
             buttons: { 'Zatvori': function() { $(this).dialog('close'); } }
         });
     });
+
+    }
 
     // --- Score dialog helper ---
     function openKosmickaScoreDialog(konsult, datum, idx) {

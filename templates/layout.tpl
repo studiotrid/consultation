@@ -28,10 +28,9 @@
      <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?{$rnd}"/>
+    <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?v={$smarty.now}"/>
    
     <!--<script src="/inc/js/jquery-1.12.4.min.js"></script>-->
-    <script src="/inc/js/jquery-3.7.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script type="text/javascript">
@@ -65,7 +64,7 @@
 
     
     <script src="/inc/js/bootstrap.bundle.min.js"></script>
-    <script src="/inc/js/custom.js?{$rnd}"></script>
+    <script src="/inc/js/custom.js?v={$smarty.now}"></script>
         <script>
                 // Register service worker to enable PWA install prompt
                 if ('serviceWorker' in navigator) {
@@ -75,8 +74,7 @@
                 }
         </script>
 
-    </head>
-    {if isset($additional_js)}{foreach from=$additional_js item=js}<script src="{$basepath}inc/js/{$js}"></script>{/foreach}{/if} 
+
 	{if isset($additional_head_script)}<script>{$additional_head_script}</script>{/if}
     <script src="/inc/js/notification-status.js"></script>
 

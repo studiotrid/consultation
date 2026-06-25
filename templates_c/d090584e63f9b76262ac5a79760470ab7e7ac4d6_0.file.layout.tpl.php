@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2026-03-12 14:34:54
+/* Smarty version 3.1.46, created on 2026-06-11 04:50:30
   from '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/layout.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69b2c0fe401e72_25825853',
+  'unifunc' => 'content_6a2a2276d1f535_60844851',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'd090584e63f9b76262ac5a79760470ab7e7ac4d6' => 
     array (
       0 => '/home/admin/web/consultation.profesionalnaastrologija.com/public_html/templates/layout.tpl',
-      1 => 1770297739,
+      1 => 1781144836,
       2 => 'file',
     ),
   ),
@@ -22,7 +22,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
     'file:footer.tpl' => 1,
   ),
 ),false)) {
-function content_69b2c0fe401e72_25825853 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a2a2276d1f535_60844851 (Smarty_Internal_Template $_smarty_tpl) {
 echo smarty_function_locale(array('path'=>"../locale",'domain'=>"messages"),$_smarty_tpl);?>
 
 <!DOCTYPE html>
@@ -74,15 +74,12 @@ array_pop($_smarty_tpl->smarty->_cache['_tag_stack']);
      <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?<?php echo $_smarty_tpl->tpl_vars['rnd']->value;?>
+    <link type="text/css" rel="stylesheet" media="all" href="/inc/css/custom.css?v=<?php echo time();?>
 "/>
    
     <!--<?php echo '<script'; ?>
  src="/inc/js/jquery-1.12.4.min.js"><?php echo '</script'; ?>
 >-->
-    <?php echo '<script'; ?>
- src="/inc/js/jquery-3.7.1.min.js"><?php echo '</script'; ?>
->
     <?php echo '<script'; ?>
  src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"><?php echo '</script'; ?>
 >
@@ -158,7 +155,7 @@ echo $_smarty_tpl->tpl_vars['addition']->value;
  src="/inc/js/bootstrap.bundle.min.js"><?php echo '</script'; ?>
 >
     <?php echo '<script'; ?>
- src="/inc/js/custom.js?<?php echo $_smarty_tpl->tpl_vars['rnd']->value;?>
+ src="/inc/js/custom.js?v=<?php echo time();?>
 "><?php echo '</script'; ?>
 >
         <?php echo '<script'; ?>
@@ -172,20 +169,7 @@ echo $_smarty_tpl->tpl_vars['addition']->value;
         <?php echo '</script'; ?>
 >
 
-    </head>
-    <?php if ((isset($_smarty_tpl->tpl_vars['additional_js']->value))) {
-$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['additional_js']->value, 'js');
-$_smarty_tpl->tpl_vars['js']->do_else = true;
-if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['js']->value) {
-$_smarty_tpl->tpl_vars['js']->do_else = false;
-echo '<script'; ?>
- src="<?php echo $_smarty_tpl->tpl_vars['basepath']->value;?>
-inc/js/<?php echo $_smarty_tpl->tpl_vars['js']->value;?>
-"><?php echo '</script'; ?>
-><?php
-}
-$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);
-}?> 
+
 	<?php if ((isset($_smarty_tpl->tpl_vars['additional_head_script']->value))) {
 echo '<script'; ?>
 ><?php echo $_smarty_tpl->tpl_vars['additional_head_script']->value;
